@@ -42,6 +42,7 @@
       >
         <view class="item-name">{{item.name}}</view>
         <view class="item-price" wx:if="{{item.price}}">¥{{item.price}}</view>
+        <view class="item-price" wx:elif="{{item.price_range}}">¥{{Math.round((item.price_range[0]+item.price_range[1])/2)}}</view>
       </view>
     </view>
 
@@ -55,6 +56,7 @@
       >
         <view class="item-name">{{item.name}}</view>
         <view class="item-price" wx:if="{{item.price}}">¥{{item.price}}</view>
+        <view class="item-price" wx:elif="{{item.price_range}}">¥{{Math.round((item.price_range[0]+item.price_range[1])/2)}}</view>
       </view>
     </view>
 
