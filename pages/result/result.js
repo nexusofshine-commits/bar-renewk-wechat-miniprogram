@@ -7,9 +7,7 @@ Page({
     matchedCocktails: [],
     primaryCocktails: [],
     alternativeCocktails: [],
-    currentPrimaryIndex: 0,
-    currentAlternativeIndex: 0,
-    currentTab: 'primary',
+    currentIndex: 0,
     currentCocktail: {},
     cocktailPrice: '',
     userInfo: null,
@@ -35,8 +33,7 @@ Page({
       const price = this.formatPrice(cocktail);
       this.setData({
         currentCocktail: cocktail,
-        cocktailPrice: price,
-        currentTab: 'primary'
+        cocktailPrice: price
       });
     }
   },
@@ -54,8 +51,7 @@ Page({
         matchedCocktails,
         primaryCocktails,
         alternativeCocktails,
-        currentPrimaryIndex: 0,
-        currentAlternativeIndex: 0
+        currentIndex: 0
       });
 
       this.updateCurrentCocktail();
@@ -69,18 +65,7 @@ Page({
   },
 
   updateCurrentCocktail() {
-    let currentCocktail;
-    
-    if (this.data.currentTab === 'primary') {
-      currentCocktail = this.data.primaryCocktails[this.data.currentPrimaryIndex];
-    } else {
-      currentCocktail = this.data.alternativeCocktails[this.data.currentAlternativeIndex];
-    }
-
-    if (!currentCocktail) {
-      currentCocktail = this.data.primaryCocktails[0];
-    }
-
+    const currentCocktail = this.data.primaryCocktails[this.data.currentIndex];
     const cocktailPrice = this.formatPrice(currentCocktail);
 
     this.setData({
@@ -99,33 +84,10 @@ Page({
     return '';
   },
 
-  switchTab(e) {
-    const tab = e.currentTarget.dataset.tab;
-    const newIndex = tab === 'primary' ? this.data.currentPrimaryIndex : this.data.currentAlternativeIndex;
-    
-    this.setData({
-      currentTab: tab,
-      currentPrimaryIndex: tab === 'primary' ? newIndex : 0,
-      currentAlternativeIndex: tab === 'alternative' ? newIndex : 0
-    });
-    
-    this.updateCurrentCocktail();
-  },
-
   selectPrimary(e) {
     const index = e.currentTarget.dataset.index;
     this.setData({
-      currentPrimaryIndex: index,
-      currentTab: 'primary'
-    });
-    this.updateCurrentCocktail();
-  },
-
-  selectAlternative(e) {
-    const index = e.currentTarget.dataset.index;
-    this.setData({
-      currentAlternativeIndex: index,
-      currentTab: 'alternative'
+      currentIndex: index
     });
     this.updateCurrentCocktail();
   },
@@ -168,6 +130,7 @@ Page({
     };
 
     try {
+      wx.setStorageSync('userInfo', userInfo);
       const orders = wx.getStorageSync('orders') || [];
       orders.push(order);
       wx.setStorageSync('orders', orders);
@@ -175,10 +138,8 @@ Page({
       
       this.setData({ hasOrdered: true });
 
-      wx.showModal({
-        title: '下单成功',
-        content: `已为您下单：${this.data.currentCocktail.name}，请稍等片刻`,
-        showCancel: false
+      wx.redirectTo({
+        url: '/pages/order-success/order-success'
       });
     } catch (e) {
       console.error('Error saving order:', e);
@@ -190,28 +151,31 @@ Page({
   },
 
   reroll() {
-    const cocktails = this.data.currentTab === 'primary' 
-      ? this.data.primaryCocktails 
-      : this.data.alternativeCocktails;
-    
-    const currentIndex = this.data.currentTab === 'primary' 
-      ? this.data.currentPrimaryIndex 
-      : this.data.currentAlternativeIndex;
-
-    const newIndex = rerollSameBase(
-      cocktails,
-      this.data.selections.base,
-      currentIndex
-    );
-
-    if (newIndex !== currentIndex) {
-      if (this.data.currentTab === 'primary') {
-        this.setData({ currentPrimaryIndex: newIndex });
-      } else {
-        this.setData({ currentAlternativeIndex: newIndex });
-      }
-      this.updateCurrentCocktail();
+    const alternatives = this.data.alternativeCocktails;
+    if (alternatives.length === 0) {
+      wx.showToast({
+        title: '没有更多选择了',
+        icon: 'none'
+      });
+      return;
     }
+
+    const randomIndex = Math.floor(Math.random() * alternatives.length);
+    const newCocktail = alternatives[randomIndex];
+    
+    const newPrimaryCocktails = [...this.data.primaryCocktails];
+    newPrimaryCocktails[this.data.currentIndex] = newCocktail;
+
+    const newAlternativeCocktails = [...alternatives];
+    newAlternativeCocktails.splice(randomIndex, 1);
+    newAlternativeCocktails.push(this.data.primaryCocktails[this.data.currentIndex]);
+
+    this.setData({
+      primaryCocktails: newPrimaryCocktails,
+      alternativeCocktails: newAlternativeCocktails
+    });
+
+    this.updateCurrentCocktail();
   },
 
   startOver() {

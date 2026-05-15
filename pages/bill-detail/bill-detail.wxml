@@ -1,0 +1,52 @@
+<view class="container" wx:if="{{bill}}">
+  <view class="page-header">
+    <text class="page-title">账单详情</text>
+  </view>
+
+  <view class="bill-summary">
+    <view class="summary-item">
+      <text class="summary-label">日期</text>
+      <text class="summary-value">{{formatDate(bill.date)}}</text>
+    </view>
+    <view class="summary-item">
+      <text class="summary-label">总杯数</text>
+      <text class="summary-value">{{bill.totalOrders}}</text>
+    </view>
+    <view class="summary-item">
+      <text class="summary-label">营业额</text>
+      <text class="summary-value highlight">¥{{bill.totalRevenue}}</text>
+    </view>
+  </view>
+
+  <scroll-view class="orders-list" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="orders-title">订单明细</view>
+    
+    <view wx:for="{{bill.orders}}" wx:key="orderTime" class="order-item">
+      <view class="order-header">
+        <view class="order-time">{{formatTime(item.orderTime)}}</view>
+        <view class="order-badge" wx:if="{{item.isSpecial}}">特调</view>
+      </view>
+      
+      <view class="order-content">
+        <view class="order-info">
+          <view class="cocktail-name">{{item.cocktail.name}}</view>
+          <view class="cocktail-name-en">{{item.cocktail.name_en}}</view>
+        </view>
+        <view class="order-price">¥{{getPrice(item.cocktail)}}</view>
+      </view>
+
+      <view class="order-footer">
+        <view class="user-info">
+          <image wx:if="{{item.userInfo && item.userInfo.avatarUrl}}" class="avatar" src="{{item.userInfo.avatarUrl}}" mode="aspectFill" />
+          <text wx:else class="avatar-placeholder">👤</text>
+          <text class="user-name">{{item.userInfo ? item.userInfo.nickName : '未知用户'}}</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>
+
+<view class="empty-state" wx:else>
+  <text class="empty-icon">📋</text>
+  <text class="empty-text">账单不存在</text>
+</view>

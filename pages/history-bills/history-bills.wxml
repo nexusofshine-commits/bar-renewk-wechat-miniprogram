@@ -1,0 +1,43 @@
+<view class="container">
+  <view class="page-header">
+    <text class="page-title">历史账单</text>
+  </view>
+
+  <scroll-view class="bills-list" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="empty-state" wx:if="{{bills.length === 0}}">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无历史账单</text>
+    </view>
+
+    <view 
+      wx:for="{{bills}}" 
+      wx:key="id"
+      class="bill-item"
+      data-bill-id="{{item.id}}"
+      bindtap="viewBillDetail"
+    >
+      <view class="bill-header">
+        <view class="bill-date">{{formatDate(item.date)}}</view>
+        <view class="bill-count">{{item.totalOrders}} 杯</view>
+      </view>
+      
+      <view class="bill-preview">
+        <view class="bill-items">
+          <text 
+            class="bill-item-name" 
+            wx:for="{{item.orders.slice(0, 3)}}" 
+            wx:for-item="order"
+            wx:key="orderTime"
+            wx:for-index="idx"
+          >{{order.cocktail.name}}{{idx < 2 ? ' · ' : ''}}</text>
+        </view>
+        <text wx:if="{{item.orders.length > 3}}" class="more-text">+{{item.orders.length - 3}}</text>
+      </view>
+
+      <view class="bill-footer">
+        <text class="bill-revenue">¥{{item.totalRevenue}}</text>
+        <text class="view-detail">查看详情 ›</text>
+      </view>
+    </view>
+  </scroll-view>
+</view>

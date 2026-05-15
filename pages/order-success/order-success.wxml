@@ -1,0 +1,31 @@
+<view class="container">
+  <view class="success-icon">✨</view>
+  <view class="success-title">下单成功</view>
+  <view class="success-subtitle">请耐心等候，您的美酒正在准备中</view>
+
+  <view class="alcohol-card">
+    <view class="alcohol-title">今日酒精摄入</view>
+    <view class="alcohol-value">{{formatAlcohol(totalAlcohol)}} g</view>
+    <view class="alcohol-tip">请适量饮酒，享受美好时光</view>
+  </view>
+
+  <view class="ranking-section">
+    <view class="section-title">今日点单排行榜</view>
+    <view class="ranking-list">
+      <view class="ranking-item" wx:for="{{userRankings}}" wx:key="userInfo.nickName">
+        <view class="ranking-number">{{index + 1}}</view>
+        <image class="user-avatar" src="{{item.userInfo.avatarUrl}}" mode="aspectFill"></image>
+        <view class="user-info">
+          <view class="user-name">{{item.userInfo.nickName}}</view>
+          <view class="user-count">{{item.count}} 杯</view>
+        </view>
+        <view class="user-alcohol">{{formatAlcohol(item.alcohol)}}g</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-actions">
+    <view class="action-btn secondary" bindtap="goToOrders">查看记录</view>
+    <view class="action-btn primary" bindtap="goToHome">返回首页</view>
+  </view>
+</view>

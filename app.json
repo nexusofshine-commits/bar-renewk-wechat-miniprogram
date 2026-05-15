@@ -4,7 +4,10 @@
     "pages/steps/steps",
     "pages/result/result",
     "pages/menu/menu",
-    "pages/orders/orders"
+    "pages/orders/orders",
+    "pages/order-success/order-success",
+    "pages/history-bills/history-bills",
+    "pages/bill-detail/bill-detail"
   ],
   "window": {
     "backgroundTextStyle": "light",

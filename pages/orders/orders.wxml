@@ -1,18 +1,24 @@
 <view class="container">
-  <view class="tab-bar">
-    <view 
-      class="tab-item {{currentTab === 'mine' ? 'active' : ''}}"
-      data-tab="mine"
-      bindtap="switchTab"
-    >
-      我的订单
+  <view class="header-actions">
+    <view class="tab-bar">
+      <view 
+        class="tab-item {{currentTab === 'mine' ? 'active' : ''}}"
+        data-tab="mine"
+        bindtap="switchTab"
+      >
+        我的订单
+      </view>
+      <view 
+        class="tab-item {{currentTab === 'all' ? 'active' : ''}}"
+        data-tab="all"
+        bindtap="switchTab"
+      >
+        全部订单
+      </view>
     </view>
-    <view 
-      class="tab-item {{currentTab === 'all' ? 'active' : ''}}"
-      data-tab="all"
-      bindtap="switchTab"
-    >
-      全部订单
+    <view class="history-btn" bindtap="goToHistory">
+      <text class="history-icon">📚</text>
+      <text class="history-text">历史账单</text>
     </view>
   </view>
 

@@ -1,5 +1,3 @@
-const barData = require('../../utils/data.js');
-
 Page({
   data: {
     orders: [],
@@ -11,11 +9,76 @@ Page({
   },
 
   onLoad() {
+    this.checkAndArchive();
     this.loadOrders();
   },
 
   onShow() {
+    this.checkAndArchive();
     this.loadOrders();
+  },
+
+  checkAndArchive() {
+    const now = new Date();
+    const todayNoon = new Date();
+    todayNoon.setHours(12, 0, 0, 0);
+
+    const yesterdayNoon = new Date(todayNoon);
+    yesterdayNoon.setDate(yesterdayNoon.getDate() - 1);
+
+    try {
+      const lastArchiveDate = wx.getStorageSync('lastArchiveDate');
+      
+      if (!lastArchiveDate) {
+        wx.setStorageSync('lastArchiveDate', now.toISOString());
+        return;
+      }
+
+      const lastArchive = new Date(lastArchiveDate);
+
+      if (now >= todayNoon && lastArchive < yesterdayNoon) {
+        this.performArchive(yesterdayNoon);
+      }
+    } catch (e) {
+      console.error('Error checking archive:', e);
+    }
+  },
+
+  performArchive(cutoffDate) {
+    try {
+      const orders = wx.getStorageSync('orders') || [];
+      
+      const ordersToArchive = orders.filter(order => {
+        const orderDate = new Date(order.orderTime);
+        return orderDate < cutoffDate;
+      });
+
+      if (ordersToArchive.length === 0) return;
+
+      const historyBills = wx.getStorageSync('historyBills') || [];
+      const newBill = {
+        id: Date.now(),
+        date: cutoffDate.toISOString(),
+        orders: ordersToArchive,
+        totalOrders: ordersToArchive.length,
+        totalRevenue: ordersToArchive.reduce((sum, order) => {
+          return sum + (order.cocktail.price || 48);
+        }, 0)
+      };
+
+      historyBills.unshift(newBill);
+      wx.setStorageSync('historyBills', historyBills);
+
+      const remainingOrders = orders.filter(order => {
+        const orderDate = new Date(order.orderTime);
+        return orderDate >= cutoffDate;
+      });
+
+      wx.setStorageSync('orders', remainingOrders);
+      wx.setStorageSync('lastArchiveDate', new Date().toISOString());
+    } catch (e) {
+      console.error('Error performing archive:', e);
+    }
   },
 
   loadOrders() {
@@ -103,6 +166,12 @@ Page({
     this.setData({
       editingOrderId: null,
       editingName: ''
+    });
+  },
+
+  goToHistory() {
+    wx.navigateTo({
+      url: '/pages/history-bills/history-bills'
     });
   },
 

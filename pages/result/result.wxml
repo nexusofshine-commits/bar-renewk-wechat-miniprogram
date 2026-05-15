@@ -1,29 +1,5 @@
 <view class="container">
-  <view class="result-header">
-    <view class="tab-bar">
-      <view 
-        class="tab-item {{currentTab === 'primary' ? 'active' : ''}}"
-        data-tab="primary"
-        bindtap="switchTab"
-      >
-        <text class="tab-label">主推</text>
-      </view>
-      <view 
-        class="tab-item {{currentTab === 'alternative' ? 'active' : ''}}"
-        data-tab="alternative"
-        bindtap="switchTab"
-      >
-        <text class="tab-label">备选</text>
-      </view>
-    </view>
-  </view>
-
-  <scroll-view 
-    class="result-content" 
-    scroll-y 
-    enhanced 
-    show-scrollbar="{{false}}"
-  >
+  <scroll-view class="result-content" scroll-y enhanced show-scrollbar="{{false}}">
     <view class="cocktail-card">
       <view class="cocktail-name">{{currentCocktail.name}}</view>
       <view class="cocktail-name-en">{{currentCocktail.name_en}}</view>
@@ -32,9 +8,9 @@
       <view class="cocktail-price">{{cocktailPrice}}</view>
     </view>
 
-    <view class="cocktail-list" wx:if="{{currentTab === 'primary' && primaryCocktails.length > 0}}">
+    <view class="cocktail-list">
       <view 
-        class="cocktail-item {{currentPrimaryIndex === index ? 'active' : ''}}"
+        class="cocktail-item {{currentIndex === index ? 'active' : ''}}"
         wx:for="{{primaryCocktails}}" 
         wx:key="id"
         data-index="{{index}}"
@@ -45,29 +21,16 @@
         <view class="item-price" wx:elif="{{item.price_range}}">¥{{Math.round((item.price_range[0]+item.price_range[1])/2)}}</view>
       </view>
     </view>
+  </scroll-view>
 
-    <view class="cocktail-list" wx:if="{{currentTab === 'alternative' && alternativeCocktails.length > 0}}">
-      <view 
-        class="cocktail-item {{currentAlternativeIndex === index ? 'active' : ''}}"
-        wx:for="{{alternativeCocktails}}" 
-        wx:key="id"
-        data-index="{{index}}"
-        bindtap="selectAlternative"
-      >
-        <view class="item-name">{{item.name}}</view>
-        <view class="item-price" wx:if="{{item.price}}">¥{{item.price}}</view>
-        <view class="item-price" wx:elif="{{item.price_range}}">¥{{Math.round((item.price_range[0]+item.price_range[1])/2)}}</view>
-      </view>
-    </view>
-
+  <view class="bottom-actions-fixed">
     <view class="action-buttons">
       <view class="action-btn secondary" bindtap="reroll">换一换</view>
       <view class="action-btn primary" bindtap="handleOrder">下单</view>
     </view>
-
-    <view class="bottom-actions">
-      <view class="bottom-btn" bindtap="goToMenu">查看完整菜单</view>
+    <view class="bottom-buttons">
+      <view class="bottom-btn" bindtap="goToMenu">完整酒单</view>
       <view class="bottom-btn" bindtap="startOver">重新选择</view>
     </view>
-  </scroll-view>
+  </view>
 </view>
