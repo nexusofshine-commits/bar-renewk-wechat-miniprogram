@@ -1,0 +1,81 @@
+<view class="container">
+  <view class="tab-bar">
+    <view 
+      class="tab-item {{currentTab === 'mine' ? 'active' : ''}}"
+      data-tab="mine"
+      bindtap="switchTab"
+    >
+      我的订单
+    </view>
+    <view 
+      class="tab-item {{currentTab === 'all' ? 'active' : ''}}"
+      data-tab="all"
+      bindtap="switchTab"
+    >
+      全部订单
+    </view>
+  </view>
+
+  <scroll-view 
+    class="orders-list" 
+    scroll-y 
+    enhanced 
+    show-scrollbar="{{false}}"
+  >
+    <view class="empty-state" wx:if="{{(currentTab === 'mine' && myOrders.length === 0) || (currentTab === 'all' && allOrders.length === 0)}}">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无订单记录</text>
+    </view>
+
+    <view 
+      wx:for="{{currentTab === 'mine' ? myOrders : allOrders}}" 
+      wx:key="orderTime"
+      class="order-item"
+    >
+      <view class="order-header">
+        <view class="order-time">{{item.formattedTime}}</view>
+        <view class="order-badge" wx:if="{{item.isSpecial}}">特调</view>
+      </view>
+      
+      <view class="order-content">
+        <view class="order-info">
+          <view class="cocktail-name-row">
+            <input 
+              wx:if="{{editingOrderId === item.orderTime}}"
+              class="editable-name"
+              value="{{editingName}}"
+              bindblur="saveEdit"
+              bindconfirm="saveEdit"
+              auto-focus
+            />
+            <text wx:else class="cocktail-name">{{item.cocktail.name}}</text>
+            <text class="cocktail-name-en">{{item.cocktail.name_en}}</text>
+          </view>
+          <text class="cocktail-description">{{item.cocktail.description}}</text>
+        </view>
+        <view class="order-price">{{item.cocktail.price ? '¥' + item.cocktail.price : (item.cocktail.price_range ? '¥' + Math.round((item.cocktail.price_range[0]+item.cocktail.price_range[1])/2) : '')}}</view>
+      </view>
+
+      <view class="order-footer">
+        <view class="user-info">
+          <image 
+            wx:if="{{item.userInfo && item.userInfo.avatarUrl}}" 
+            class="avatar" 
+            src="{{item.userInfo.avatarUrl}}" 
+            mode="aspectFill"
+          />
+          <text wx:else class="avatar-placeholder">👤</text>
+          <text class="user-name">{{item.userInfo ? item.userInfo.nickName : '未知用户'}}</text>
+        </view>
+        <view 
+          wx:if="{{item.isSpecial && editingOrderId !== item.orderTime}}"
+          class="edit-btn"
+          data-order-id="{{item.orderTime}}"
+          bindtap="startEdit"
+        >
+          编辑
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>

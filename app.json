@@ -3,7 +3,8 @@
     "pages/welcome/welcome",
     "pages/steps/steps",
     "pages/result/result",
-    "pages/menu/menu"
+    "pages/menu/menu",
+    "pages/orders/orders"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -11,6 +12,32 @@
     "navigationBarTitleText": "Bar RenewK",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#1a1a1a"
+  },
+  "tabBar": {
+    "color": "#808080",
+    "selectedColor": "#d4af37",
+    "backgroundColor": "#1a1a1a",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/welcome/welcome",
+        "text": "选酒",
+        "iconPath": "images/tab_select.png",
+        "selectedIconPath": "images/tab_select_active.png"
+      },
+      {
+        "pagePath": "pages/menu/menu",
+        "text": "酒单",
+        "iconPath": "images/tab_menu.png",
+        "selectedIconPath": "images/tab_menu_active.png"
+      },
+      {
+        "pagePath": "pages/orders/orders",
+        "text": "点单记录",
+        "iconPath": "images/tab_orders.png",
+        "selectedIconPath": "images/tab_orders_active.png"
+      }
+    ]
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"

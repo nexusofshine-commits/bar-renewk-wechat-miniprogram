@@ -93,7 +93,8 @@ Page({
     if (cocktail.price) {
       return `¥${cocktail.price}`;
     } else if (cocktail.price_range) {
-      return `¥${cocktail.price_range[0]}-${cocktail.price_range[1]}`;
+      const midPrice = Math.round((cocktail.price_range[0] + cocktail.price_range[1]) / 2);
+      return `¥${midPrice}`;
     }
     return '';
   },

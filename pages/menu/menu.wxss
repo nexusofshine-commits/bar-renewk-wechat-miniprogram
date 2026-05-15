@@ -1,5 +1,5 @@
 .container {
-  height: 100vh;
+  height: calc(100vh - 100rpx);
   display: flex;
   flex-direction: column;
   padding: 20rpx;
@@ -9,7 +9,7 @@
 
 .search-section {
   flex-shrink: 0;
-  padding: 20rpx 0;
+  padding: 10rpx 0;
 }
 
 .search-input {
@@ -23,6 +23,33 @@
 
 .search-input::placeholder {
   color: #808080;
+}
+
+.tab-bar {
+  flex-shrink: 0;
+  display: flex;
+  gap: 16rpx;
+  padding: 10rpx 0;
+  overflow-x: auto;
+}
+
+.tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-item {
+  padding: 16rpx 32rpx;
+  background: #2f2f2f;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #808080;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.tab-item.active {
+  background: #d4af37;
+  color: #1a1a1a;
 }
 
 .cocktail-list {
@@ -89,13 +116,24 @@
   font-weight: 600;
 }
 
-.back-btn {
+.special-order-btn {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
   padding: 24rpx;
-  background: #2f2f2f;
-  border-radius: 30rpx;
-  color: #d0d0d0;
-  text-align: center;
-  font-size: 28rpx;
-  margin-top: 10rpx;
+  margin-top: 20rpx;
+  background: linear-gradient(135deg, #d4af37 0%, #f0c855 100%);
+  border-radius: 40rpx;
+}
+
+.special-icon {
+  font-size: 32rpx;
+}
+
+.special-text {
+  font-size: 30rpx;
+  color: #1a1a1a;
+  font-weight: 600;
 }

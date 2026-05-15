@@ -40,21 +40,17 @@
       <scroll-view scroll-y class="flavor-scroll">
         <view class="flavor-grid">
           <view 
-            wx:for="{{selectionFlow[1].options}}" 
+            wx:for="{{flavorOptions}}" 
             wx:key="id"
-            class="flavor-tag {{selections.flavors.indexOf(item.id) !== -1 ? 'selected' : ''}}"
+            class="flavor-tag {{selections.flavor === item.id ? 'selected' : ''}}"
             data-option-id="{{item.id}}"
-            bindtap="toggleFlavor"
+            bindtap="selectFlavor"
           >
             <text class="flavor-icon">{{item.icon}}</text>
             <text class="flavor-label">{{item.label}}</text>
           </view>
         </view>
       </scroll-view>
-      <view class="confirm-section">
-        <view class="selected-count">已选 {{selections.flavors.length}} 个口味</view>
-        <view class="confirm-btn" bindtap="confirmFlavor">确定</view>
-      </view>
     </view>
 
     <view wx:if="{{currentStep === 3}}" class="step-3-layout">

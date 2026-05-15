@@ -6,14 +6,24 @@ Page({
     currentStep: 1,
     selections: {
       base: null,
-      flavors: [],
+      flavor: null,
       strength: null
-    }
+    },
+    flavorOptions: []
   },
 
   onLoad() {
+    const flavors = barData.selection_flow.steps[1].options;
+    flavors.unshift({
+      id: 'no_idea',
+      label: '没有想法',
+      icon: '🎲',
+      description: '让我来推荐'
+    });
+    
     this.setData({
-      selectionFlow: barData.selection_flow.steps
+      selectionFlow: barData.selection_flow.steps,
+      flavorOptions: flavors
     });
   },
 
@@ -25,24 +35,10 @@ Page({
     });
   },
 
-  toggleFlavor(e) {
+  selectFlavor(e) {
     const optionId = e.currentTarget.dataset.optionId;
-    const currentFlavors = [...this.data.selections.flavors];
-    const index = currentFlavors.indexOf(optionId);
-
-    if (index > -1) {
-      currentFlavors.splice(index, 1);
-    } else {
-      currentFlavors.push(optionId);
-    }
-
     this.setData({
-      'selections.flavors': currentFlavors
-    });
-  },
-
-  confirmFlavor() {
-    this.setData({
+      'selections.flavor': optionId,
       currentStep: 3
     });
   },
@@ -59,13 +55,19 @@ Page({
   },
 
   showResults() {
+    const selections = {
+      base: this.data.selections.base,
+      flavors: this.data.selections.flavor === 'no_idea' ? [] : [this.data.selections.flavor],
+      strength: this.data.selections.strength
+    };
+
     const matchedCocktails = findMatches(
-      this.data.selections,
+      selections,
       barData.cocktails
     );
 
     try {
-      wx.setStorageSync('selections', this.data.selections);
+      wx.setStorageSync('selections', selections);
       wx.setStorageSync('matchedCocktails', matchedCocktails);
     } catch (e) {
       console.error('Error saving data to storage:', e);

@@ -8,6 +8,18 @@
     />
   </view>
   
+  <view class="tab-bar">
+    <view 
+      wx:for="{{tabs}}" 
+      wx:key="id"
+      class="tab-item {{currentTab === item.id ? 'active' : ''}}"
+      data-tab-id="{{item.id}}"
+      bindtap="switchTab"
+    >
+      {{item.label}}
+    </view>
+  </view>
+  
   <scroll-view 
     class="cocktail-list" 
     scroll-y 
@@ -30,11 +42,14 @@
         <view class="cocktail-meta">
           <text class="cocktail-volume">{{item.volume}}</text>
           <text class="cocktail-price" wx:if="{{item.price}}">¥{{item.price}}</text>
-          <text class="cocktail-price" wx:elif="{{item.price_range}}">¥{{item.price_range[0]}}-{{item.price_range[1]}}</text>
+          <text class="cocktail-price" wx:elif="{{item.price_range}}">¥{{Math.round((item.price_range[0]+item.price_range[1])/2)}}</text>
         </view>
       </view>
     </view>
   </scroll-view>
   
-  <view class="back-btn" bindtap="goBack">返回</view>
+  <view class="special-order-btn" bindtap="orderSpecial">
+    <text class="special-icon">✨</text>
+    <text class="special-text">特调下单 ¥58</text>
+  </view>
 </view>

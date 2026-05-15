@@ -1,5 +1,5 @@
 .container {
-  height: 100vh;
+  height: calc(100vh - 100rpx);
   display: flex;
   flex-direction: column;
   background: #1a1a1a;
@@ -131,14 +131,11 @@
 
 .step-2-layout {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  padding: 10rpx 0;
 }
 
 .flavor-scroll {
-  flex: 1;
-  padding: 10rpx 0;
+  height: 100%;
 }
 
 .flavor-grid {
@@ -146,7 +143,6 @@
   flex-wrap: wrap;
   gap: 20rpx;
   justify-content: center;
-  padding: 10rpx 0;
 }
 
 .flavor-tag {
@@ -177,31 +173,6 @@
 
 .flavor-tag.selected .flavor-label {
   color: #d4af37;
-}
-
-.confirm-section {
-  flex-shrink: 0;
-  padding: 24rpx 0;
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-  margin-top: 20rpx;
-}
-
-.selected-count {
-  flex: 1;
-  font-size: 28rpx;
-  color: #d0d0d0;
-  text-align: center;
-}
-
-.confirm-btn {
-  padding: 20rpx 50rpx;
-  background: linear-gradient(135deg, #d4af37 0%, #f0c855 100%);
-  color: #1a1a1a;
-  border-radius: 40rpx;
-  font-size: 30rpx;
-  font-weight: 600;
 }
 
 .step-3-layout {
