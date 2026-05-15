@@ -1,172 +1,169 @@
 .container {
-  padding: 20px;
-  max-width: 600px;
-  margin: 0 auto;
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a1a;
+}
+
+.result-header {
+  flex-shrink: 0;
+  padding: 30rpx 40rpx;
+  background: #1a1a1a;
+}
+
+.tab-bar {
+  display: flex;
+  background: #2f2f2f;
+  border-radius: 40rpx;
+  padding: 8rpx;
+  gap: 8rpx;
+}
+
+.tab-item {
+  flex: 1;
+  padding: 20rpx;
+  border-radius: 32rpx;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.tab-item.active {
+  background: linear-gradient(135deg, #d4af37 0%, #f0c855 100%);
+}
+
+.tab-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #808080;
+}
+
+.tab-item.active .tab-label {
+  color: #1a1a1a;
 }
 
 .result-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+  flex: 1;
+  padding: 30rpx;
 }
 
 .cocktail-card {
   background: #2f2f2f;
-  border-radius: 24px;
-  padding: 30px;
-  width: 100%;
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  margin-bottom: 30px;
-}
-
-.cocktail-icon-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-
-.cup-display {
-  width: 120px;
-  height: 168px;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+  border: 2rpx solid rgba(212, 175, 55, 0.2);
 }
 
 .cocktail-name {
-  font-size: 2rem;
+  font-size: 48rpx;
   color: #d4af37;
   text-align: center;
-  margin-bottom: 4px;
+  font-weight: 700;
+  margin-bottom: 8rpx;
 }
 
 .cocktail-name-en {
-  font-size: 1.1rem;
+  font-size: 28rpx;
   color: #808080;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 16rpx;
   font-style: italic;
 }
 
-.volume-display {
-  font-size: 1rem;
+.cocktail-volume {
+  font-size: 26rpx;
   color: #d4af37;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 20rpx;
   font-weight: 500;
 }
 
 .cocktail-description {
-  font-size: 1.05rem;
+  font-size: 28rpx;
   color: #d0d0d0;
   text-align: center;
-  margin-bottom: 30px;
   line-height: 1.8;
-}
-
-.cocktail-radar {
-  margin-bottom: 30px;
-  display: flex;
-  justify-content: center;
-}
-
-.radar-container {
-  position: relative;
-  width: 250px;
-  height: 250px;
-}
-
-.radar-canvas {
-  width: 100%;
-  height: 100%;
+  margin-bottom: 24rpx;
 }
 
 .cocktail-price {
   text-align: center;
-  font-size: 1.3rem;
+  font-size: 36rpx;
   color: #d4af37;
   font-weight: 700;
-  margin-bottom: 30px;
 }
 
-.alternatives-section {
-  width: 100%;
-  margin-top: 20px;
-}
-
-.alternatives-title {
-  font-size: 1.3rem;
-  color: #d4af37;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.alternatives-list {
+.cocktail-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16rpx;
+  margin-bottom: 30rpx;
 }
 
-.alternative-item {
-  padding: 20px;
+.cocktail-item {
+  padding: 24rpx;
   background: #2f2f2f;
-  border-radius: 16px;
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  cursor: pointer;
-  transition: all 0.3s ease;
+  border-radius: 16rpx;
+  border: 2rpx solid transparent;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  transition: all 0.3s ease;
 }
 
-.alternative-mini-cup {
-  width: 50px;
-  height: 70px;
-  flex-shrink: 0;
+.cocktail-item.active {
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.15);
 }
 
-.alternative-details {
-  flex: 1;
+.item-name {
+  font-size: 28rpx;
+  color: #ffffff;
+  font-weight: 500;
 }
 
-.alternative-name {
-  font-weight: 600;
+.item-price {
+  font-size: 26rpx;
   color: #d4af37;
-  margin-bottom: 4px;
-}
-
-.alternative-description {
-  font-size: 0.9rem;
-  color: #d0d0d0;
-}
-
-.result-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-}
-
-.btn {
-  padding: 16px 40px;
-  font-size: 1.1rem;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: all 0.3s ease;
   font-weight: 600;
-  letter-spacing: 0.5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.btn-primary {
+.action-buttons {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 28rpx;
+  border-radius: 40rpx;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.action-btn.primary {
   background: linear-gradient(135deg, #d4af37 0%, #f0c855 100%);
   color: #1a1a1a;
 }
 
-.btn-secondary {
+.action-btn.secondary {
   background: transparent;
   color: #d0d0d0;
-  border: 2px solid #d0d0d0;
+  border: 2rpx solid #d0d0d0;
+}
+
+.bottom-actions {
+  display: flex;
+  gap: 20rpx;
+  justify-content: center;
+}
+
+.bottom-btn {
+  padding: 20rpx 32rpx;
+  font-size: 26rpx;
+  color: #808080;
+  transition: all 0.3s ease;
 }

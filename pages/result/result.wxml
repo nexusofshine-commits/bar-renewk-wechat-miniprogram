@@ -1,59 +1,71 @@
 <view class="container">
-  <view class="result-content">
-    <view class="cocktail-card">
-      <view class="cocktail-icon-wrapper">
-        <view class="cup-display">
-          <image src="" mode="aspectFit" class="cup-image" />
-        </view>
+  <view class="result-header">
+    <view class="tab-bar">
+      <view 
+        class="tab-item {{currentTab === 'primary' ? 'active' : ''}}"
+        data-tab="primary"
+        bindtap="switchTab"
+      >
+        <text class="tab-label">主推</text>
       </view>
-      <view class="cocktail-name">{{currentCocktail.name}}</view>
-      <view class="cocktail-name-en">{{currentCocktail.name_en}}</view>
-      <view class="volume-display">{{currentCocktail.volume}}</view>
-      <view class="cocktail-description">{{currentCocktail.description}}</view>
-      
-      <view class="cocktail-radar">
-        <view class="radar-container">
-          <canvas 
-            type="2d" 
-            id="radarCanvas" 
-            class="radar-canvas"
-          ></canvas>
-        </view>
+      <view 
+        class="tab-item {{currentTab === 'alternative' ? 'active' : ''}}"
+        data-tab="alternative"
+        bindtap="switchTab"
+      >
+        <text class="tab-label">备选</text>
       </view>
-      
-      <view class="cocktail-price">
-        {{cocktailPrice}}
-      </view>
-    </view>
-
-    <view class="alternatives-section" wx:if="{{showAlternatives}}">
-      <view class="alternatives-title">其他推荐</view>
-      <view class="alternatives-list">
-        <view 
-          class="alternative-item" 
-          wx:for="{{alternatives}}" 
-          wx:key="id"
-          data-index="{{item.index}}"
-          bindtap="selectAlternative"
-        >
-          <view class="alternative-mini-cup">
-            <image src="" mode="aspectFit" class="mini-cup-image" />
-          </view>
-          <view class="alternative-details">
-            <view class="alternative-name">{{item.cocktail.name}} - {{item.cocktail.name_en}}</view>
-            <view class="alternative-description">{{item.cocktail.description}}</view>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <view class="result-actions">
-      <button 
-        class="btn btn-secondary" 
-        wx:if="{{showReroll}}" 
-        bindtap="reroll"
-      >换一换口味</button>
-      <button class="btn btn-primary" bindtap="startOver">重新选择</button>
     </view>
   </view>
+
+  <scroll-view 
+    class="result-content" 
+    scroll-y 
+    enhanced 
+    show-scrollbar="{{false}}"
+  >
+    <view class="cocktail-card">
+      <view class="cocktail-name">{{currentCocktail.name}}</view>
+      <view class="cocktail-name-en">{{currentCocktail.name_en}}</view>
+      <view class="cocktail-volume">{{currentCocktail.volume}}</view>
+      <view class="cocktail-description">{{currentCocktail.description}}</view>
+      <view class="cocktail-price">{{cocktailPrice}}</view>
+    </view>
+
+    <view class="cocktail-list" wx:if="{{currentTab === 'primary' && primaryCocktails.length > 0}}">
+      <view 
+        class="cocktail-item {{currentPrimaryIndex === index ? 'active' : ''}}"
+        wx:for="{{primaryCocktails}}" 
+        wx:key="id"
+        data-index="{{index}}"
+        bindtap="selectPrimary"
+      >
+        <view class="item-name">{{item.name}}</view>
+        <view class="item-price" wx:if="{{item.price}}">¥{{item.price}}</view>
+      </view>
+    </view>
+
+    <view class="cocktail-list" wx:if="{{currentTab === 'alternative' && alternativeCocktails.length > 0}}">
+      <view 
+        class="cocktail-item {{currentAlternativeIndex === index ? 'active' : ''}}"
+        wx:for="{{alternativeCocktails}}" 
+        wx:key="id"
+        data-index="{{index}}"
+        bindtap="selectAlternative"
+      >
+        <view class="item-name">{{item.name}}</view>
+        <view class="item-price" wx:if="{{item.price}}">¥{{item.price}}</view>
+      </view>
+    </view>
+
+    <view class="action-buttons">
+      <view class="action-btn secondary" bindtap="reroll">换一换</view>
+      <view class="action-btn primary" bindtap="handleOrder">下单</view>
+    </view>
+
+    <view class="bottom-actions">
+      <view class="bottom-btn" bindtap="goToMenu">查看完整菜单</view>
+      <view class="bottom-btn" bindtap="startOver">重新选择</view>
+    </view>
+  </scroll-view>
 </view>

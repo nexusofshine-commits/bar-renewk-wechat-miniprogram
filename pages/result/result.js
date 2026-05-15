@@ -5,27 +5,60 @@ Page({
   data: {
     selections: {},
     matchedCocktails: [],
-    currentResultIndex: 0,
+    primaryCocktails: [],
+    alternativeCocktails: [],
+    currentPrimaryIndex: 0,
+    currentAlternativeIndex: 0,
+    currentTab: 'primary',
     currentCocktail: {},
-    alternatives: [],
-    showAlternatives: false,
-    showReroll: true,
-    cocktailPrice: ''
+    cocktailPrice: '',
+    userInfo: null,
+    hasOrdered: false
   },
 
-  onLoad() {
+  onLoad(options) {
+    if (options.cocktailId) {
+      this.loadSingleCocktail(options.cocktailId);
+    } else {
+      this.loadMatchedCocktails();
+    }
+  },
+
+  onShow() {
+    const hasOrdered = wx.getStorageSync('hasOrdered') || false;
+    this.setData({ hasOrdered });
+  },
+
+  loadSingleCocktail(cocktailId) {
+    const cocktail = barData.cocktails.find(c => c.id === cocktailId);
+    if (cocktail) {
+      const price = this.formatPrice(cocktail);
+      this.setData({
+        currentCocktail: cocktail,
+        cocktailPrice: price,
+        currentTab: 'primary'
+      });
+    }
+  },
+
+  loadMatchedCocktails() {
     try {
       const selections = wx.getStorageSync('selections');
-      const matchedCocktails = wx.getStorageSync('matchedCocktails');
-      const currentResultIndex = wx.getStorageSync('currentResultIndex') || 0;
+      const matchedCocktails = wx.getStorageSync('matchedCocktails') || [];
+
+      const primaryCocktails = matchedCocktails.slice(0, 3);
+      const alternativeCocktails = matchedCocktails.slice(3);
 
       this.setData({
         selections,
         matchedCocktails,
-        currentResultIndex
+        primaryCocktails,
+        alternativeCocktails,
+        currentPrimaryIndex: 0,
+        currentAlternativeIndex: 0
       });
 
-      this.updateDisplay();
+      this.updateCurrentCocktail();
     } catch (e) {
       console.error('Error loading data from storage:', e);
       wx.showToast({
@@ -35,180 +68,160 @@ Page({
     }
   },
 
-  onShow() {
-    this.drawRadarChart();
-  },
-
-  onReady() {
-    this.drawRadarChart();
-  },
-
-  updateDisplay() {
-    const currentCocktail = this.data.matchedCocktails[this.data.currentResultIndex];
-    const showTop = 3;
-    const alternatives = this.data.matchedCocktails
-      .slice(1, showTop + 1)
-      .map((cocktail, index) => ({
-        index: index + 1,
-        cocktail
-      }));
-
-    let cocktailPrice = '';
-    if (currentCocktail.price) {
-      cocktailPrice = `¥${currentCocktail.price}`;
-    } else if (currentCocktail.price_range) {
-      cocktailPrice = `¥${currentCocktail.price_range[0]} - ¥${currentCocktail.price_range[1]}`;
+  updateCurrentCocktail() {
+    let currentCocktail;
+    
+    if (this.data.currentTab === 'primary') {
+      currentCocktail = this.data.primaryCocktails[this.data.currentPrimaryIndex];
+    } else {
+      currentCocktail = this.data.alternativeCocktails[this.data.currentAlternativeIndex];
     }
+
+    if (!currentCocktail) {
+      currentCocktail = this.data.primaryCocktails[0];
+    }
+
+    const cocktailPrice = this.formatPrice(currentCocktail);
 
     this.setData({
       currentCocktail,
-      alternatives,
-      showAlternatives: alternatives.length > 0,
       cocktailPrice
     });
-
-    this.drawRadarChart();
   },
 
-  drawRadarChart() {
-    const currentCocktail = this.data.currentCocktail;
-    if (!currentCocktail || !currentCocktail.radar) {
-      return;
+  formatPrice(cocktail) {
+    if (cocktail.price) {
+      return `¥${cocktail.price}`;
+    } else if (cocktail.price_range) {
+      return `¥${cocktail.price_range[0]}-${cocktail.price_range[1]}`;
     }
-
-    const query = wx.createSelectorQuery();
-    query.select('#radarCanvas')
-      .fields({ node: true, size: true })
-      .exec((res) => {
-        if (!res[0]) {
-          return;
-        }
-
-        const canvas = res[0].node;
-        const ctx = canvas.getContext('2d');
-
-        const dpr = wx.getSystemInfoSync().pixelRatio;
-        canvas.width = res[0].width * dpr;
-        canvas.height = res[0].height * dpr;
-        ctx.scale(dpr, dpr);
-
-        const centerX = res[0].width / 2;
-        const centerY = res[0].height / 2;
-        const radius = Math.min(centerX, centerY) - 30;
-
-        const radarData = currentCocktail.radar;
-        const axes = [
-          { key: 'sour', label: '酸' },
-          { key: 'sweet', label: '甜' },
-          { key: 'bitter', label: '苦' },
-          { key: 'strong', label: '烈' },
-          { key: 'fruity', label: '果味' }
-        ];
-
-        this.drawBackground(ctx, centerX, centerY, radius);
-        this.drawAxes(ctx, centerX, centerY, radius, axes);
-        this.drawData(ctx, centerX, centerY, radius, axes, radarData);
-      });
+    return '';
   },
 
-  drawBackground(ctx, centerX, centerY, radius) {
-    ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)';
-    ctx.lineWidth = 1;
-
-    for (let i = 1; i <= 5; i++) {
-      const currentRadius = (radius * i) / 5;
-      ctx.beginPath();
-      for (let j = 0; j < 5; j++) {
-        const angle = (j * 2 * Math.PI) / 5 - Math.PI / 2;
-        const x = centerX + currentRadius * Math.cos(angle);
-        const y = centerY + currentRadius * Math.sin(angle);
-        if (j === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-      }
-      ctx.closePath();
-      ctx.stroke();
-    }
-  },
-
-  drawAxes(ctx, centerX, centerY, radius, axes) {
-    ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
-    ctx.lineWidth = 1;
-
-    axes.forEach((axis, index) => {
-      const angle = (index * 2 * Math.PI) / axes.length - Math.PI / 2;
-      const x = centerX + radius * Math.cos(angle);
-      const y = centerY + radius * Math.sin(angle);
-
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(x, y);
-      ctx.stroke();
-
-      const labelX = centerX + (radius + 15) * Math.cos(angle);
-      const labelY = centerY + (radius + 15) * Math.sin(angle);
-
-      ctx.fillStyle = '#808080';
-      ctx.font = '12px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(axis.label, labelX, labelY);
+  switchTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    const newIndex = tab === 'primary' ? this.data.currentPrimaryIndex : this.data.currentAlternativeIndex;
+    
+    this.setData({
+      currentTab: tab,
+      currentPrimaryIndex: tab === 'primary' ? newIndex : 0,
+      currentAlternativeIndex: tab === 'alternative' ? newIndex : 0
     });
+    
+    this.updateCurrentCocktail();
   },
 
-  drawData(ctx, centerX, centerY, radius, axes, radarData) {
-    ctx.fillStyle = 'rgba(212, 175, 55, 0.3)';
-    ctx.strokeStyle = '#d4af37';
-    ctx.lineWidth = 2;
-
-    ctx.beginPath();
-
-    axes.forEach((axis, index) => {
-      const value = radarData[axis.key] || 0;
-      const angle = (index * 2 * Math.PI) / axes.length - Math.PI / 2;
-      const x = centerX + (value / 5) * radius * Math.cos(angle);
-      const y = centerY + (value / 5) * radius * Math.sin(angle);
-
-      if (index === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
+  selectPrimary(e) {
+    const index = e.currentTarget.dataset.index;
+    this.setData({
+      currentPrimaryIndex: index,
+      currentTab: 'primary'
     });
-
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    this.updateCurrentCocktail();
   },
 
   selectAlternative(e) {
     const index = e.currentTarget.dataset.index;
     this.setData({
-      currentResultIndex: index
+      currentAlternativeIndex: index,
+      currentTab: 'alternative'
     });
-    this.updateDisplay();
+    this.updateCurrentCocktail();
+  },
+
+  handleOrder() {
+    if (this.data.hasOrdered) {
+      wx.showToast({
+        title: '您已下单过',
+        icon: 'none'
+      });
+      return;
+    }
+
+    wx.getUserProfile({
+      desc: '用于保存您的下单记录',
+      success: (res) => {
+        const userInfo = res.userInfo;
+        this.setData({ userInfo });
+        
+        this.saveOrder(userInfo);
+      },
+      fail: () => {
+        wx.showToast({
+          title: '需要授权才能下单',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  saveOrder(userInfo) {
+    const order = {
+      cocktail: this.data.currentCocktail,
+      selections: this.data.selections,
+      userInfo: {
+        nickName: userInfo.nickName,
+        avatarUrl: userInfo.avatarUrl
+      },
+      orderTime: new Date().toISOString()
+    };
+
+    try {
+      const orders = wx.getStorageSync('orders') || [];
+      orders.push(order);
+      wx.setStorageSync('orders', orders);
+      wx.setStorageSync('hasOrdered', true);
+      
+      this.setData({ hasOrdered: true });
+
+      wx.showModal({
+        title: '下单成功',
+        content: `已为您下单：${this.data.currentCocktail.name}，请稍等片刻`,
+        showCancel: false
+      });
+    } catch (e) {
+      console.error('Error saving order:', e);
+      wx.showToast({
+        title: '下单失败',
+        icon: 'none'
+      });
+    }
   },
 
   reroll() {
+    const cocktails = this.data.currentTab === 'primary' 
+      ? this.data.primaryCocktails 
+      : this.data.alternativeCocktails;
+    
+    const currentIndex = this.data.currentTab === 'primary' 
+      ? this.data.currentPrimaryIndex 
+      : this.data.currentAlternativeIndex;
+
     const newIndex = rerollSameBase(
-      this.data.matchedCocktails,
+      cocktails,
       this.data.selections.base,
-      this.data.currentResultIndex
+      currentIndex
     );
 
-    if (newIndex !== this.data.currentResultIndex) {
-      this.setData({
-        currentResultIndex: newIndex
-      });
-      this.updateDisplay();
+    if (newIndex !== currentIndex) {
+      if (this.data.currentTab === 'primary') {
+        this.setData({ currentPrimaryIndex: newIndex });
+      } else {
+        this.setData({ currentAlternativeIndex: newIndex });
+      }
+      this.updateCurrentCocktail();
     }
   },
 
   startOver() {
     wx.reLaunch({
       url: '/pages/welcome/welcome'
+    });
+  },
+
+  goToMenu() {
+    wx.navigateTo({
+      url: '/pages/menu/menu'
     });
   }
 });

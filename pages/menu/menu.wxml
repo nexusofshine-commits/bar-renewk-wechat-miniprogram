@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="search-section">
+    <input 
+      class="search-input" 
+      placeholder="搜索鸡尾酒..." 
+      bindinput="onSearch"
+      value="{{searchKeyword}}"
+    />
+  </view>
+  
+  <scroll-view 
+    class="cocktail-list" 
+    scroll-y 
+    enhanced 
+    show-scrollbar="{{false}}"
+  >
+    <view 
+      class="cocktail-item" 
+      wx:for="{{filteredCocktails}}" 
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="goToResult"
+    >
+      <view class="cocktail-info">
+        <view class="cocktail-name-row">
+          <text class="cocktail-name">{{item.name}}</text>
+          <text class="cocktail-name-en">{{item.name_en}}</text>
+        </view>
+        <text class="cocktail-description">{{item.description}}</text>
+        <view class="cocktail-meta">
+          <text class="cocktail-volume">{{item.volume}}</text>
+          <text class="cocktail-price" wx:if="{{item.price}}">¥{{item.price}}</text>
+          <text class="cocktail-price" wx:elif="{{item.price_range}}">¥{{item.price_range[0]}}-{{item.price_range[1]}}</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+  
+  <view class="back-btn" bindtap="goBack">返回</view>
+</view>
