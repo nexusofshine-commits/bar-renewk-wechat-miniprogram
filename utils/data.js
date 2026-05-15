@@ -1,10 +1,10 @@
 const barData = {
   "venue": {
-    "name": "Bar RenewK",
+    "name": "Bar Kenny",
     "new_customer_offer": {
       "options": [
         {"id": "opt_a", "label": "30ml优质酒体验", "description": "威士忌/金酒/干邑三选一", "icon": "🥃"},
-        {"id": "opt_b", "label": "第二杯半价", "description": "与朋友分享更划算", "icon": "🥂"}
+        {"id": "opt_b", "label": "第二杯半价", "description": "价格较低的享受半价", "icon": "🥂"}
       ],
       "rule": "if user_wants_pure_spirits → opt_a; if social_occasion → opt_b"
     }
