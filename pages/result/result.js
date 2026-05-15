@@ -152,7 +152,7 @@ Page({
 
   reroll() {
     const alternatives = this.data.alternativeCocktails;
-    if (alternatives.length === 0) {
+    if (alternatives.length < 3) {
       wx.showToast({
         title: '没有更多选择了',
         icon: 'none'
@@ -160,19 +160,32 @@ Page({
       return;
     }
 
-    const randomIndex = Math.floor(Math.random() * alternatives.length);
-    const newCocktail = alternatives[randomIndex];
-    
-    const newPrimaryCocktails = [...this.data.primaryCocktails];
-    newPrimaryCocktails[this.data.currentIndex] = newCocktail;
+    // 随机选择3个不同的备选鸡尾酒索引
+    const indices = [];
+    while (indices.length < 3) {
+      const randomIndex = Math.floor(Math.random() * alternatives.length);
+      if (!indices.includes(randomIndex)) {
+        indices.push(randomIndex);
+      }
+    }
 
+    // 按照索引排序，避免删除时的顺序问题
+    indices.sort((a, b) => b - a);
+
+    const newPrimaryCocktails = indices.map(index => alternatives[index]);
+    
     const newAlternativeCocktails = [...alternatives];
-    newAlternativeCocktails.splice(randomIndex, 1);
-    newAlternativeCocktails.push(this.data.primaryCocktails[this.data.currentIndex]);
+    // 从备选列表中移除新选出的3个
+    indices.forEach(index => {
+      newAlternativeCocktails.splice(index, 1);
+    });
+    // 将原来的3个主选项加入备选
+    newAlternativeCocktails.push(...this.data.primaryCocktails);
 
     this.setData({
       primaryCocktails: newPrimaryCocktails,
-      alternativeCocktails: newAlternativeCocktails
+      alternativeCocktails: newAlternativeCocktails,
+      currentIndex: 0
     });
 
     this.updateCurrentCocktail();

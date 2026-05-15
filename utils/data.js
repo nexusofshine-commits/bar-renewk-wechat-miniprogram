@@ -38,14 +38,9 @@ const barData = {
           {"id": "chrysanthemum", "label": "菊花", "icon": "🏵️"},
           {"id": "elderflower", "label": "接骨木花", "icon": "🌼"},
           {"id": "violet", "label": "紫罗兰", "icon": "💜"},
-          {"id": "lavender", "label": "薰衣草", "icon": "💜"},
-          {"id": "mint", "label": "薄荷", "icon": "🌿"},
           {"id": "lemongrass", "label": "香茅", "icon": "🌾"},
-          {"id": "ginger", "label": "生姜", "icon": "🫚"},
-          {"id": "cinnamon", "label": "肉桂", "icon": "🥮"},
           {"id": "smoky", "label": "烟熏", "icon": "🔥"},
           {"id": "bitter", "label": "苦精", "icon": "💊"},
-          {"id": "coffee", "label": "咖啡", "icon": "☕"},
           {"id": "matcha", "label": "抹茶", "icon": "🍵"},
           {"id": "white_chocolate", "label": "白巧克力", "icon": "🍫"},
           {"id": "almond", "label": "杏仁", "icon": "🥜"},
@@ -53,7 +48,10 @@ const barData = {
           {"id": "earl_grey", "label": "伯爵茶", "icon": "🫖"},
           {"id": "black_cherry", "label": "黑樱桃", "icon": "🍒"},
           {"id": "cucumber", "label": "青瓜", "icon": "🥒"},
-          {"id": "orange", "label": "橙子", "icon": "🍊"}
+          {"id": "orange", "label": "橙子", "icon": "🍊"},
+          {"id": "yuzu", "label": "柚子", "icon": "🍊"},
+          {"id": "pine", "label": "雪松", "icon": "🌲"},
+          {"id": "herbal", "label": "草本", "icon": "🌿"}
         ]
       },
       {
@@ -62,9 +60,9 @@ const barData = {
         "subtitle": "选择酒精度范围",
         "type": "single_choice",
         "options": [
-          {"id": "strength_low", "label": "🟢 低度 (5-10°)", "description": "长饮，可以大口喝"},
+          {"id": "strength_low", "label": "🟢 低度 (8-15°)", "description": "长饮，可以大口喝"},
           {"id": "strength_mid", "label": "🟡 中度 (15-25°)", "description": "标准鸡尾酒，小口品"},
-          {"id": "strength_high", "label": "🔴 高度 (25-30°)", "description": "烈酒感强，慢慢喝"}
+          {"id": "strength_high", "label": "🔴 高度 (25-35°)", "description": "烈酒感强，慢慢喝"}
         ]
       }
     ]
