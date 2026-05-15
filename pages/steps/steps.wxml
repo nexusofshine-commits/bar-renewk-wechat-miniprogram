@@ -1,0 +1,93 @@
+<view class="container">
+  <view class="progress-bar">
+    <view class="progress-steps">
+      <view 
+        class="step-indicator {{currentStep === 1 ? 'active' : currentStep > 1 ? 'completed' : ''}}"
+        data-step="1"
+      >1</view>
+      <view class="step-line"></view>
+      <view 
+        class="step-indicator {{currentStep === 2 ? 'active' : currentStep > 2 ? 'completed' : ''}}"
+        data-step="2"
+      >2</view>
+      <view class="step-line"></view>
+      <view 
+        class="step-indicator {{currentStep === 3 ? 'active' : ''}}"
+        data-step="3"
+      >3</view>
+    </view>
+  </view>
+
+  <view class="step-content">
+    <view class="step-header">
+      <view class="step-title">{{currentStepData.title}}</view>
+      <view class="step-subtitle">{{currentStepData.subtitle}}</view>
+    </view>
+
+    <!-- Step 1: Base Selection -->
+    <view wx:if="{{currentStep === 1}}" class="step-options step-1-layout">
+      <view 
+        wx:for="{{currentStepData.options}}" 
+        wx:key="id"
+        class="step-option {{selections.base === item.id ? 'selected' : ''}}"
+        data-option-id="{{item.id}}"
+        bindtap="selectBase"
+      >
+        <view class="icon">{{item.icon}}</view>
+        <view class="label">{{item.label}}</view>
+        <view class="description">{{item.description}}</view>
+        <view class="volume-info">{{item.volume}}</view>
+        <view class="mini-cup">
+          <image src="" mode="aspectFit" class="cup-image" />
+        </view>
+      </view>
+    </view>
+
+    <!-- Step 2: Flavor Selection -->
+    <view wx:if="{{currentStep === 2}}" class="step-2-layout">
+      <view 
+        wx:for="{{currentStepData.options}}" 
+        wx:key="id"
+        class="tag-option {{selections.flavors.indexOf(item.id) !== -1 ? 'selected' : ''}}"
+        data-option-id="{{item.id}}"
+        bindtap="toggleFlavor"
+      >
+        <view class="icon">{{item.icon}}</view>
+        <view>{{item.label}}</view>
+      </view>
+    </view>
+
+    <!-- Step 3: Strength Selection -->
+    <view wx:if="{{currentStep === 3}}" class="step-3-layout">
+      <view 
+        wx:for="{{currentStepData.options}}" 
+        wx:key="id"
+        class="strength-option {{selections.strength === item.id ? 'selected' : ''}}"
+        data-option-id="{{item.id}}"
+        bindtap="selectStrength"
+      >
+        <view class="label">{{item.label}}</view>
+        <view class="description">{{item.description}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="step-navigation">
+    <button 
+      class="btn btn-secondary" 
+      wx:if="{{currentStep > 1}}" 
+      bindtap="goPrev"
+    >上一步</button>
+    <button 
+      class="btn btn-primary" 
+      wx:if="{{currentStep < 3}}" 
+      bindtap="goNext"
+      disabled="{{currentStep === 1 && !selections.base}}"
+    >下一步</button>
+    <button 
+      class="btn btn-primary" 
+      wx:if="{{currentStep === 3}}" 
+      bindtap="showResults"
+    >推荐鸡尾酒</button>
+  </view>
+</view>
