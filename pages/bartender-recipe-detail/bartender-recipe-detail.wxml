@@ -41,7 +41,36 @@
       </view>
     </view>
     
-    <button class="btn-add" bindtap="addMaterial">添加材料</button>
+    <view class="add-material-section">
+      <view class="add-material-header" bindtap="toggleMaterialPicker">
+        <text class="add-material-text">选择库存材料</text>
+        <text class="arrow">{{showMaterialPicker ? '▼' : '▶'}}</text>
+      </view>
+      
+      <view class="material-picker" wx:if="{{showMaterialPicker}}">
+        <view class="material-picker-item {{selectedMaterialIndex === index ? 'selected' : ''}}" 
+              wx:for="{{availableInventory}}" 
+              wx:key="id" 
+              catchtap="selectMaterial" 
+              data-index="{{index}}">
+          <text class="material-picker-text">{{item.name}}</text>
+          <text wx:if="{{selectedMaterialIndex === index}}" class="check-mark">✓</text>
+        </view>
+        
+        <view wx:if="{{selectedMaterialIndex !== -1}}">
+          <view class="amount-input-section">
+            <text class="label">用量：</text>
+            <input type="number" 
+                   class="amount-input-small" 
+                   value="{{newMaterialAmount}}"
+                   placeholder="输入用量(ml)"
+                   bindinput="onAmountInput" />
+            <text class="unit">ml</text>
+          </view>
+          <button class="confirm-add-btn" bindtap="confirmAddMaterial">确认添加</button>
+        </view>
+      </view>
+    </view>
   </view>
 
   <view class="section">

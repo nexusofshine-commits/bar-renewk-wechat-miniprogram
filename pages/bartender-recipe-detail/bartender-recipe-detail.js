@@ -25,7 +25,11 @@ Page({
       coconut: '椰子',
       triple_sec: '橙皮酒',
       cointreau: '君度'
-    }
+    },
+    showMaterialPicker: false,
+    availableInventory: [],
+    selectedMaterialIndex: -1,
+    newMaterialAmount: ''
   },
 
   onLoad(options) {
@@ -49,6 +53,8 @@ Page({
           sales: savedData.sales || 0
         }
       });
+      
+      this.loadAvailableInventory();
     }
   },
 
@@ -68,6 +74,13 @@ Page({
     };
 
     return materialsMap[cocktail.id] || [{name: 'gin', amount: 45}];
+  },
+
+  loadAvailableInventory() {
+    const inventory = wx.getStorageSync('inventory') || [];
+    const currentMaterials = this.data.cocktail.materials.map(m => m.name);
+    const availableInventory = inventory.filter(item => !currentMaterials.includes(item.id));
+    this.setData({ availableInventory });
   },
 
   getMaterialName(id) {
@@ -108,6 +121,7 @@ Page({
           
           const cocktail = {...this.data.cocktail, materials};
           this.saveCocktail(cocktail);
+          this.loadAvailableInventory();
           wx.showToast({
             title: '已删除',
             icon: 'success'
@@ -117,56 +131,62 @@ Page({
     });
   },
 
-  addMaterial() {
-    const { materialNames } = this.data;
-    const currentMaterials = this.data.cocktail.materials.map(m => m.name);
-    const availableMaterials = Object.keys(materialNames).filter(id => !currentMaterials.includes(id));
+  toggleMaterialPicker() {
+    this.setData({
+      showMaterialPicker: !this.data.showMaterialPicker,
+      selectedMaterialIndex: -1,
+      newMaterialAmount: ''
+    });
+  },
+
+  selectMaterial(e) {
+    const index = e.currentTarget.dataset.index;
+    this.setData({
+      selectedMaterialIndex: index,
+      newMaterialAmount: ''
+    });
+  },
+
+  onAmountInput(e) {
+    this.setData({ newMaterialAmount: e.detail.value });
+  },
+
+  confirmAddMaterial() {
+    const { selectedMaterialIndex, newMaterialAmount, availableInventory, cocktail } = this.data;
     
-    if (availableMaterials.length === 0) {
+    if (selectedMaterialIndex === -1) {
       wx.showToast({
-        title: '所有材料已添加',
+        title: '请先选择材料',
         icon: 'none'
       });
       return;
     }
 
-    wx.showModal({
-      title: '添加材料',
-      editable: true,
-      placeholderText: '输入材料ID和用量，用逗号分隔\n如: gin,45',
-      content: '',
-      success: (res) => {
-        if (res.confirm && res.content) {
-          const parts = res.content.split(',');
-          if (parts.length === 2) {
-            const [id, amount] = parts;
-            const materialId = id.trim();
-            const materialAmount = parseInt(parts[1].trim()) || 45;
-            
-            if (materialNames[materialId]) {
-              const materials = [...this.data.cocktail.materials];
-              materials.push({ name: materialId, amount: materialAmount });
-              
-              const cocktail = {...this.data.cocktail, materials};
-              this.saveCocktail(cocktail);
-              wx.showToast({
-                title: '材料已添加',
-                icon: 'success'
-              });
-            } else {
-              wx.showToast({
-                title: '材料不存在',
-                icon: 'none'
-              });
-            }
-          } else {
-            wx.showToast({
-              title: '格式错误',
-              icon: 'none'
-            });
-          }
-        }
-      }
+    const amount = parseInt(newMaterialAmount);
+    if (isNaN(amount) || amount <= 0) {
+      wx.showToast({
+        title: '请输入有效用量',
+        icon: 'none'
+      });
+      return;
+    }
+
+    const selectedMaterial = availableInventory[selectedMaterialIndex];
+    const materials = [...cocktail.materials];
+    materials.push({ name: selectedMaterial.id, amount: amount });
+
+    const updatedCocktail = { ...cocktail, materials };
+    this.saveCocktail(updatedCocktail);
+    
+    this.setData({
+      showMaterialPicker: false,
+      selectedMaterialIndex: -1,
+      newMaterialAmount: ''
+    });
+
+    wx.showToast({
+      title: '材料已添加',
+      icon: 'success'
     });
   },
 
@@ -221,6 +241,7 @@ Page({
     };
     wx.setStorageSync('recipeData', recipeData);
     this.setData({ cocktail });
+    this.loadAvailableInventory();
   },
 
   goBack() {
