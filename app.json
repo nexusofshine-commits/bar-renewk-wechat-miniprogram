@@ -7,7 +7,12 @@
     "pages/orders/orders",
     "pages/order-success/order-success",
     "pages/history-bills/history-bills",
-    "pages/bill-detail/bill-detail"
+    "pages/bill-detail/bill-detail",
+    "pages/bartender/bartender",
+    "pages/bartender-recipes/bartender-recipes",
+    "pages/bartender-recipe-detail/bartender-recipe-detail",
+    "pages/bartender-inventory/bartender-inventory",
+    "pages/bartender-billing/bartender-billing"
   ],
   "window": {
     "backgroundTextStyle": "light",

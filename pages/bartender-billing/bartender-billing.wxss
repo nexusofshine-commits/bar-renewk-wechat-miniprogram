@@ -1,0 +1,251 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 20rpx;
+}
+
+.header {
+  text-align: center;
+  padding: 20rpx 0;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #d4af37;
+  margin-bottom: 10rpx;
+}
+
+.header-subtitle {
+  font-size: 24rpx;
+  color: #808080;
+}
+
+.filter-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+  padding: 20rpx 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.tab {
+  padding: 10rpx 30rpx;
+  border-radius: 20rpx;
+  font-size: 28rpx;
+  color: #808080;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s;
+}
+
+.tab.active {
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+}
+
+.billing-list {
+  height: calc(100vh - 400rpx);
+  padding: 20rpx 0;
+}
+
+.billing-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.billing-card.paid {
+  opacity: 0.7;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.billing-card.unpaid {
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.billing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.customer-info {
+  display: flex;
+  align-items: center;
+}
+
+.customer-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 16rpx;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.customer-avatar image {
+  width: 100%;
+  height: 100%;
+}
+
+.customer-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 6rpx;
+}
+
+.billing-time {
+  font-size: 24rpx;
+  color: #808080;
+}
+
+.billing-status {
+  padding: 6rpx 16rpx;
+  border-radius: 10rpx;
+  font-size: 22rpx;
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+}
+
+.billing-status.paid {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.billing-items {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16rpx 0;
+  margin-bottom: 16rpx;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8rpx 0;
+}
+
+.item-name {
+  flex: 1;
+  font-size: 26rpx;
+  color: #a0a0a0;
+}
+
+.item-qty {
+  width: 60rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #808080;
+}
+
+.item-price {
+  width: 120rpx;
+  text-align: right;
+  font-size: 26rpx;
+  color: #d4af37;
+}
+
+.billing-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.billing-total {
+  display: flex;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 26rpx;
+  color: #808080;
+}
+
+.total-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #d4af37;
+}
+
+.billing-actions {
+  display: flex;
+  gap: 12rpx;
+}
+
+.action-btn {
+  padding: 12rpx 20rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  border: none;
+  background: rgba(212, 175, 55, 0.2);
+  color: #d4af37;
+}
+
+.action-btn.merge {
+  background: rgba(156, 39, 176, 0.2);
+  color: #9c27b0;
+}
+
+.action-btn.edit {
+  background: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+}
+
+.action-btn.checkout {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.action-btn.paid {
+  background: rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+.summary-bar {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-top: 20rpx;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+}
+
+.summary-label {
+  font-size: 26rpx;
+  color: #808080;
+}
+
+.summary-value {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #d4af37;
+}
+
+.summary-value.warning {
+  color: #ffc107;
+}
+
+.btn-back {
+  margin-top: 20rpx;
+  background: transparent;
+  border: 1px solid #808080;
+  color: #808080;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+}
+
+.btn-back::after {
+  border: none;
+}

@@ -1,0 +1,170 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 20rpx;
+}
+
+.header {
+  text-align: center;
+  padding: 20rpx 0;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #d4af37;
+  margin-bottom: 10rpx;
+}
+
+.header-subtitle {
+  font-size: 24rpx;
+  color: #808080;
+}
+
+.filter-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+  padding: 20rpx 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.tab {
+  padding: 10rpx 30rpx;
+  border-radius: 20rpx;
+  font-size: 28rpx;
+  color: #808080;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s;
+}
+
+.tab.active {
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+}
+
+.recipe-list {
+  height: calc(100vh - 300rpx);
+  padding: 20rpx 0;
+}
+
+.recipe-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.recipe-card.inactive {
+  opacity: 0.6;
+  border: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.recipe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.recipe-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.recipe-price {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #d4af37;
+}
+
+.recipe-name-en {
+  font-size: 24rpx;
+  color: #808080;
+  margin-bottom: 16rpx;
+}
+
+.recipe-stats {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.stat-badge {
+  padding: 6rpx 16rpx;
+  border-radius: 10rpx;
+  font-size: 22rpx;
+  background: rgba(128, 128, 128, 0.3);
+  color: #808080;
+}
+
+.stat-badge.active {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.stat-sales {
+  font-size: 24rpx;
+  color: #808080;
+}
+
+.recipe-materials {
+  margin-bottom: 20rpx;
+}
+
+.materials-label {
+  font-size: 24rpx;
+  color: #808080;
+}
+
+.materials-text {
+  font-size: 24rpx;
+  color: #a0a0a0;
+}
+
+.recipe-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 16rpx;
+  border-radius: 10rpx;
+  font-size: 26rpx;
+  border: none;
+  background: rgba(212, 175, 55, 0.2);
+  color: #d4af37;
+}
+
+.action-btn.stop {
+  background: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+}
+
+.action-btn.start {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.action-btn.edit {
+  background: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+}
+
+.btn-back {
+  margin-top: 20rpx;
+  background: transparent;
+  border: 1px solid #808080;
+  color: #808080;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+}
+
+.btn-back::after {
+  border: none;
+}

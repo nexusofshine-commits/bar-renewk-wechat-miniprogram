@@ -1,0 +1,57 @@
+<view class="container">
+  <view class="header">
+    <view class="header-title">📦 库存管理</view>
+    <view class="header-subtitle">管理材料库存和预警</view>
+  </view>
+
+  <view class="filter-tabs">
+    <view class="tab {{currentTab === 'all' ? 'active' : ''}}" bindtap="switchTab" data-tab="all">全部</view>
+    <view class="tab {{currentTab === 'warning' ? 'active' : ''}}" bindtap="switchTab" data-tab="warning">预警</view>
+    <view class="tab {{currentTab === 'normal' ? 'active' : ''}}" bindtap="switchTab" data-tab="normal">正常</view>
+  </view>
+
+  <scroll-view scroll-y class="inventory-list">
+    <view class="inventory-card {{item.warningLevel}}" 
+          wx:for="{{filteredInventory}}" 
+          wx:key="id">
+      <view class="inventory-header">
+        <view class="inventory-name">{{item.name}}</view>
+        <view class="inventory-badge {{item.warningLevel}}">
+          {{getWarningText(item)}}
+        </view>
+      </view>
+
+      <view class="inventory-stats">
+        <view class="stock-info">
+          <view class="stock-label">当前库存</view>
+          <view class="stock-value">{{item.currentStock}} ml</view>
+        </view>
+        <view class="stock-info">
+          <view class="stock-label">初始库存</view>
+          <view class="stock-value">{{item.initialStock}} ml</view>
+        </view>
+        <view class="stock-info">
+          <view class="stock-label">使用占比</view>
+          <view class="stock-value {{item.warningLevel}}">{{getUsagePercent(item)}}%</view>
+        </view>
+      </view>
+
+      <view class="stock-bar">
+        <view class="stock-bar-fill {{item.warningLevel}}" 
+              style="width: {{getUsagePercent(item)}}%"></view>
+      </view>
+
+      <view class="inventory-actions">
+        <button class="action-btn add" catchtap="addStock" data-id="{{item.id}}">
+          入库
+        </button>
+        <button class="action-btn edit" catchtap="editStock" data-id="{{item.id}}">
+          调整
+        </button>
+      </view>
+    </view>
+  </scroll-view>
+
+  <button class="btn-add-material" bindtap="addMaterial">新增材料</button>
+  <button class="btn-back" bindtap="goBack">返回</button>
+</view>

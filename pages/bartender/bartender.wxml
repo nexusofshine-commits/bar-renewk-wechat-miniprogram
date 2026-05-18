@@ -1,0 +1,43 @@
+<view class="container">
+  <view class="header">
+    <view class="header-title">🍸 调酒师后台</view>
+    <view class="header-subtitle">Bar Kenny 管理面板</view>
+  </view>
+
+  <view class="menu-grid">
+    <view class="menu-card" bindtap="goToRecipes">
+      <view class="menu-icon">📋</view>
+      <view class="menu-title">配方管理</view>
+      <view class="menu-desc">酒款上下架、定价、用量</view>
+    </view>
+
+    <view class="menu-card" bindtap="goToInventory">
+      <view class="menu-icon">📦</view>
+      <view class="menu-title">库存管理</view>
+      <view class="menu-desc">材料入库、预警管理</view>
+    </view>
+
+    <view class="menu-card" bindtap="goToBilling">
+      <view class="menu-icon">💰</view>
+      <view class="menu-title">账单管理</view>
+      <view class="menu-desc">订单记录、合并账单</view>
+    </view>
+  </view>
+
+  <view class="quick-stats">
+    <view class="stat-item">
+      <view class="stat-value">{{todayOrders}}</view>
+      <view class="stat-label">今日订单</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-value">{{todayRevenue}}¥</view>
+      <view class="stat-label">今日营收</view>
+    </view>
+    <view class="stat-item warning">
+      <view class="stat-value">{{lowStockCount}}</view>
+      <view class="stat-label">预警材料</view>
+    </view>
+  </view>
+
+  <button class="btn-exit" bindtap="exitBartender">退出后台</button>
+</view>

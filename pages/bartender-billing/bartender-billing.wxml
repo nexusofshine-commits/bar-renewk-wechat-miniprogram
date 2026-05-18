@@ -1,0 +1,75 @@
+<view class="container">
+  <view class="header">
+    <view class="header-title">💰 账单管理</view>
+    <view class="header-subtitle">管理订单和账单</view>
+  </view>
+
+  <view class="filter-tabs">
+    <view class="tab {{currentTab === 'all' ? 'active' : ''}}" bindtap="switchTab" data-tab="all">全部</view>
+    <view class="tab {{currentTab === 'unpaid' ? 'active' : ''}}" bindtap="switchTab" data-tab="unpaid">待结账</view>
+    <view class="tab {{currentTab === 'paid' ? 'active' : ''}}" bindtap="switchTab" data-tab="paid">已结账</view>
+  </view>
+
+  <scroll-view scroll-y class="billing-list">
+    <view class="billing-card {{item.isPaid ? 'paid' : 'unpaid'}}" 
+          wx:for="{{filteredBills}}" 
+          wx:key="id">
+      <view class="billing-header">
+        <view class="customer-info">
+          <view class="customer-avatar">
+            <image src="{{item.userInfo.avatarUrl}}" mode="aspectFill"></image>
+          </view>
+          <view class="customer-details">
+            <view class="customer-name">{{item.userInfo.nickName}}</view>
+            <view class="billing-time">{{formatTime(item.orderTime)}}</view>
+          </view>
+        </view>
+        <view class="billing-status {{item.isPaid ? 'paid' : 'unpaid'}}">
+          {{item.isPaid ? '已结账' : '待结账'}}
+        </view>
+      </view>
+
+      <view class="billing-items">
+        <view class="item-row" wx:for="{{item.items}}" wx:key="cocktailId" wx:for-item="orderItem">
+          <view class="item-name">{{orderItem.name}}</view>
+          <view class="item-qty">x{{orderItem.qty}}</view>
+          <view class="item-price">¥{{orderItem.price}}</view>
+        </view>
+      </view>
+
+      <view class="billing-footer">
+        <view class="billing-total">
+          <text class="total-label">合计：</text>
+          <text class="total-value">¥{{item.totalAmount}}</text>
+        </view>
+        
+        <view class="billing-actions">
+          <button class="action-btn merge" catchtap="mergeBill" data-id="{{item.id}}" wx:if="{{!item.isPaid}}">
+            合并
+          </button>
+          <button class="action-btn edit" catchtap="editPrice" data-id="{{item.id}}" wx:if="{{!item.isPaid}}">
+            修改
+          </button>
+          <button class="action-btn {{item.isPaid ? 'paid' : 'checkout'}}" 
+                  catchtap="togglePaid" 
+                  data-id="{{item.id}}">
+            {{item.isPaid ? '已结账' : '结账'}}
+          </button>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="summary-bar">
+    <view class="summary-item">
+      <text class="summary-label">待结账：</text>
+      <text class="summary-value warning">{{unpaidCount}} 单</text>
+    </view>
+    <view class="summary-item">
+      <text class="summary-label">待收金额：</text>
+      <text class="summary-value warning">¥{{unpaidAmount}}</text>
+    </view>
+  </view>
+
+  <button class="btn-back" bindtap="goBack">返回</button>
+</view>

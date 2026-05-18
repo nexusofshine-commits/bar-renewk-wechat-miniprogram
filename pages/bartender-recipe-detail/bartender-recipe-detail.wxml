@@ -1,0 +1,56 @@
+<view class="container">
+  <view class="header">
+    <view class="header-title">{{cocktail.name}}</view>
+    <view class="header-subtitle">{{cocktail.name_en}}</view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">基本信息</view>
+    <view class="info-card">
+      <view class="info-row">
+        <view class="info-label">状态</view>
+        <view class="info-value">
+          <switch checked="{{cocktail.isActive}}" bindchange="toggleStatus" color="#d4af37"/>
+        </view>
+      </view>
+      <view class="info-row">
+        <view class="info-label">价格</view>
+        <view class="info-value price">¥{{cocktail.price}}</view>
+      </view>
+      <view class="info-row">
+        <view class="info-label">销量</view>
+        <view class="info-value">{{cocktail.sales || 0}} 杯</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">材料配方</view>
+    <view class="materials-list">
+      <view class="material-item" wx:for="{{cocktail.materials}}" wx:key="index">
+        <view class="material-name">{{getMaterialName(item.name)}}</view>
+        <view class="material-amount">
+          <input type="number" 
+                 value="{{item.amount}}" 
+                 data-index="{{index}}"
+                 bindchange="updateMaterialAmount"
+                 class="amount-input"/>
+          <text class="unit">ml</text>
+        </view>
+        <button class="delete-btn" catchtap="deleteMaterial" data-index="{{index}}">删除</button>
+      </view>
+    </view>
+    
+    <button class="btn-add" bindtap="addMaterial">添加材料</button>
+  </view>
+
+  <view class="section">
+    <view class="section-title">操作</view>
+    <view class="action-buttons">
+      <button class="action-btn" bindtap="editPrice">修改价格</button>
+      <button class="action-btn" bindtap="resetSales">重置销量</button>
+    </view>
+  </view>
+
+  <button class="btn-back" bindtap="goBack">返回</button>
+</view>

@@ -1,0 +1,53 @@
+<view class="container">
+  <view class="header">
+    <view class="header-title">📋 配方管理</view>
+    <view class="header-subtitle">管理酒款的上架、下架和定价</view>
+  </view>
+
+  <view class="filter-tabs">
+    <view class="tab {{currentTab === 'all' ? 'active' : ''}}" bindtap="switchTab" data-tab="all">全部</view>
+    <view class="tab {{currentTab === 'active' ? 'active' : ''}}" bindtap="switchTab" data-tab="active">已上架</view>
+    <view class="tab {{currentTab === 'inactive' ? 'active' : ''}}" bindtap="switchTab" data-tab="inactive">已下架</view>
+  </view>
+
+  <scroll-view scroll-y class="recipe-list">
+    <view class="recipe-card {{item.isActive ? 'active' : 'inactive'}}" 
+          wx:for="{{filteredCocktails}}" 
+          wx:key="id"
+          bindtap="editRecipe" 
+          data-id="{{item.id}}">
+      <view class="recipe-header">
+        <view class="recipe-name">{{item.name}}</view>
+        <view class="recipe-price">¥{{item.price}}</view>
+      </view>
+      <view class="recipe-name-en">{{item.name_en}}</view>
+      
+      <view class="recipe-stats">
+        <view class="stat-badge {{item.isActive ? 'active' : 'inactive'}}">
+          {{item.isActive ? '已上架' : '已下架'}}
+        </view>
+        <view class="stat-sales">
+          <text>📊 销量: {{item.sales || 0}}</text>
+        </view>
+      </view>
+
+      <view class="recipe-materials">
+        <text class="materials-label">材料：</text>
+        <text class="materials-text">{{getMaterialsText(item)}}</text>
+      </view>
+
+      <view class="recipe-actions">
+        <button class="action-btn {{item.isActive ? 'stop' : 'start'}}" 
+                catchtap="toggleStatus" 
+                data-id="{{item.id}}">
+          {{item.isActive ? '下架' : '上架'}}
+        </button>
+        <button class="action-btn edit" catchtap="editPrice" data-id="{{item.id}}">
+          修改价格
+        </button>
+      </view>
+    </view>
+  </scroll-view>
+
+  <button class="btn-back" bindtap="goBack">返回</button>
+</view>
