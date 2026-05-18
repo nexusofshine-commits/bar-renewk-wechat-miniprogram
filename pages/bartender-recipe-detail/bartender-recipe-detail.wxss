@@ -53,6 +53,13 @@
   border-bottom: none;
 }
 
+.info-row.highlight {
+  background: rgba(212, 175, 55, 0.05);
+  margin: 0 -20rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 8rpx;
+}
+
 .info-label {
   font-size: 28rpx;
   color: #808080;
@@ -61,6 +68,8 @@
 .info-value {
   font-size: 28rpx;
   color: #ffffff;
+  display: flex;
+  align-items: center;
 }
 
 .info-value.price {
@@ -70,6 +79,53 @@
 
 .info-value.abv {
   color: #ff9800;
+  font-weight: bold;
+}
+
+.info-value.water {
+  color: #2196f3;
+  font-weight: bold;
+}
+
+.inline-input {
+  width: 120rpx;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8rpx;
+  padding: 8rpx;
+  color: #d4af37;
+  font-size: 28rpx;
+  margin-right: 10rpx;
+}
+
+.unit-text {
+  font-size: 24rpx;
+  color: #808080;
+}
+
+.materials-summary {
+  background: rgba(33, 150, 243, 0.1);
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-label {
+  font-size: 26rpx;
+  color: #808080;
+}
+
+.summary-value {
+  font-size: 28rpx;
+  color: #2196f3;
   font-weight: bold;
 }
 

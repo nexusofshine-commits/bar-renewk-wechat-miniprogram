@@ -12,8 +12,9 @@ Page({
       abv: '',
       unitType: 'ml',
       quantity: '',
-      unitPrice: ''
-    }
+      totalPrice: ''
+    },
+    calculatedUnitPrice: 0
   },
 
   onLoad() {
@@ -91,8 +92,9 @@ Page({
         abv: '',
         unitType: 'ml',
         quantity: '',
-        unitPrice: ''
-      }
+        totalPrice: ''
+      },
+      calculatedUnitPrice: 0
     });
   },
 
@@ -105,6 +107,23 @@ Page({
     this.setData({
       [`formData.${field}`]: e.detail.value
     });
+    
+    if (field === 'quantity' || field === 'totalPrice') {
+      this.calculateUnitPrice();
+    }
+  },
+
+  calculateUnitPrice() {
+    const { formData } = this.data;
+    const quantity = parseFloat(formData.quantity);
+    const totalPrice = parseFloat(formData.totalPrice);
+    
+    if (!isNaN(quantity) && !isNaN(totalPrice) && quantity > 0) {
+      const unitPrice = (totalPrice / quantity).toFixed(2);
+      this.setData({ calculatedUnitPrice: unitPrice });
+    } else {
+      this.setData({ calculatedUnitPrice: 0 });
+    }
   },
 
   selectUnitType(e) {
@@ -112,6 +131,7 @@ Page({
     this.setData({
       'formData.unitType': type
     });
+    this.calculateUnitPrice();
   },
 
   editMaterial(e) {
@@ -129,14 +149,15 @@ Page({
           abv: item.abv || '',
           unitType: item.unitType || 'ml',
           quantity: item.currentStock,
-          unitPrice: item.unitPrice || ''
-        }
+          totalPrice: ''
+        },
+        calculatedUnitPrice: item.unitPrice || 0
       });
     }
   },
 
   confirmAddMaterial() {
-    const { formData, modalType, editingId } = this.data;
+    const { formData, modalType, editingId, calculatedUnitPrice } = this.data;
     
     if (!formData.name.trim()) {
       wx.showToast({
@@ -147,7 +168,7 @@ Page({
     }
 
     const quantity = parseFloat(formData.quantity);
-    const unitPrice = parseFloat(formData.unitPrice);
+    const totalPrice = parseFloat(formData.totalPrice);
     const abv = parseFloat(formData.abv) || 0;
 
     if (isNaN(quantity) || quantity < 0) {
@@ -158,15 +179,17 @@ Page({
       return;
     }
 
-    if (isNaN(unitPrice) || unitPrice < 0) {
-      wx.showToast({
-        title: '请输入有效的单价',
-        icon: 'none'
-      });
-      return;
+    if (modalType === 'add') {
+      if (isNaN(totalPrice) || totalPrice < 0) {
+        wx.showToast({
+          title: '请输入有效的总价',
+          icon: 'none'
+        });
+        return;
+      }
     }
 
-    const id = modalType === 'edit' ? editingId : this.generateId(formData.name);
+    const unitPrice = calculatedUnitPrice || 0;
     const inventory = [...this.data.inventory];
 
     if (modalType === 'edit') {
@@ -184,6 +207,7 @@ Page({
         };
       }
     } else {
+      const id = this.generateId(formData.name);
       const newMaterial = {
         id: id,
         brand: formData.brand.trim(),

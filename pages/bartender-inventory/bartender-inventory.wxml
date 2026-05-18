@@ -30,7 +30,7 @@
           <text class="info-value">{{item.abv || 0}}%</text>
         </view>
         <view class="info-row">
-          <text class="info-label">进货单价</text>
+          <text class="info-label">单价</text>
           <text class="info-value">¥{{item.unitPrice || 0}}/{{item.unitType === 'piece' ? '件' : 'ml'}}</text>
         </view>
       </view>
@@ -109,9 +109,14 @@
     </view>
 
     <view class="form-item">
-      <text class="form-label">本次进货单价 *</text>
-      <input class="form-input" type="digit" value="{{formData.unitPrice}}" placeholder="请输入单价" bindinput="onInput" data-field="unitPrice"/>
+      <text class="form-label">本次进货总价 *</text>
+      <input class="form-input" type="digit" value="{{formData.totalPrice}}" placeholder="请输入总价" bindinput="onInput" data-field="totalPrice"/>
       <text class="form-unit">元</text>
+    </view>
+
+    <view class="calculated-price" wx:if="{{formData.quantity && formData.totalPrice}}">
+      <text class="calculated-label">计算得出单价：</text>
+      <text class="calculated-value">¥{{calculatedUnitPrice}}/{{formData.unitType === 'piece' ? '件' : 'ml'}}</text>
     </view>
 
     <view class="modal-actions">

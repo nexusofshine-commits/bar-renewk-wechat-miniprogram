@@ -22,7 +22,22 @@
         <view class="info-value">{{cocktail.sales || 0}} 杯</view>
       </view>
       <view class="info-row">
-        <view class="info-label">酒精度</view>
+        <view class="info-label">出品杯量</view>
+        <view class="info-value">
+          <input class="inline-input" 
+                 type="digit" 
+                 value="{{cocktail.serveSize}}" 
+                 bindchange="updateServeSize"
+                 placeholder="ml"/>
+          <text class="unit-text">ml</text>
+        </view>
+      </view>
+      <view class="info-row highlight">
+        <view class="info-label">化水量（自动计算）</view>
+        <view class="info-value water">{{calculatedWater}} ml</view>
+      </view>
+      <view class="info-row highlight">
+        <view class="info-label">出品酒精度</view>
         <view class="info-value abv">{{calculatedABV}}%</view>
       </view>
     </view>
@@ -49,6 +64,13 @@
 
   <view class="section">
     <view class="section-title">材料配方</view>
+    <view class="materials-summary">
+      <view class="summary-item">
+        <text class="summary-label">材料总量：</text>
+        <text class="summary-value">{{totalMaterialsVolume}} ml</text>
+      </view>
+    </view>
+    
     <view class="materials-list">
       <view class="material-item" wx:for="{{cocktail.materials}}" wx:key="index">
         <view class="material-name">{{getMaterialName(item.name)}}</view>

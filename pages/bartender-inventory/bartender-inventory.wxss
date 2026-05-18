@@ -287,6 +287,28 @@
   color: #808080;
 }
 
+.calculated-price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 10rpx;
+  margin-bottom: 30rpx;
+}
+
+.calculated-label {
+  font-size: 26rpx;
+  color: #808080;
+}
+
+.calculated-value {
+  font-size: 28rpx;
+  color: #d4af37;
+  font-weight: bold;
+}
+
 .unit-selector {
   display: flex;
   gap: 20rpx;

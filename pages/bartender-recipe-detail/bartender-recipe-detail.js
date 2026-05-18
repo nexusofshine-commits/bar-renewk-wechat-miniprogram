@@ -31,7 +31,9 @@ Page({
     selectedMaterialIndex: -1,
     newMaterialAmount: '',
     newTag: '',
-    calculatedABV: 0
+    calculatedABV: 0,
+    calculatedWater: 0,
+    totalMaterialsVolume: 0
   },
 
   onLoad(options) {
@@ -53,12 +55,13 @@ Page({
           price: savedData.price || cocktail.price,
           materials: savedData.materials || this.getDefaultMaterials(cocktail),
           sales: savedData.sales || 0,
-          tags: savedData.tags || []
+          tags: savedData.tags || [],
+          serveSize: savedData.serveSize || 200
         }
       });
       
       this.loadAvailableInventory();
-      this.calculateABV();
+      this.calculateVolumes();
     }
   },
 
@@ -87,24 +90,39 @@ Page({
     this.setData({ availableInventory });
   },
 
-  calculateABV() {
+  calculateVolumes() {
     const { cocktail } = this.data;
     const inventory = wx.getStorageSync('inventory') || [];
     
+    let totalMaterialsVolume = 0;
     let totalAlcohol = 0;
-    let totalVolume = 0;
 
     cocktail.materials.forEach(material => {
       const inventoryItem = inventory.find(i => i.id === material.name);
       const abv = inventoryItem && inventoryItem.abv ? inventoryItem.abv : 0;
       const amount = material.amount || 0;
       
+      totalMaterialsVolume += amount;
       totalAlcohol += (abv / 100) * amount;
-      totalVolume += amount;
     });
 
+    const serveSize = cocktail.serveSize || 200;
+    const calculatedWater = Math.max(0, serveSize - totalMaterialsVolume);
+    const totalVolume = totalMaterialsVolume + calculatedWater;
     const calculatedABV = totalVolume > 0 ? Math.round((totalAlcohol / totalVolume) * 100 * 10) / 10 : 0;
-    this.setData({ calculatedABV });
+
+    this.setData({
+      totalMaterialsVolume: Math.round(totalMaterialsVolume * 10) / 10,
+      calculatedWater: Math.round(calculatedWater * 10) / 10,
+      calculatedABV: calculatedABV
+    });
+  },
+
+  updateServeSize(e) {
+    const serveSize = parseFloat(e.detail.value) || 0;
+    const cocktail = { ...this.data.cocktail, serveSize };
+    this.saveCocktail(cocktail);
+    this.calculateVolumes();
   },
 
   getMaterialName(id) {
@@ -149,7 +167,7 @@ Page({
     
     const cocktail = {...this.data.cocktail, materials};
     this.saveCocktail(cocktail);
-    this.calculateABV();
+    this.calculateVolumes();
   },
 
   deleteMaterial(e) {
@@ -166,7 +184,7 @@ Page({
           const cocktail = {...this.data.cocktail, materials};
           this.saveCocktail(cocktail);
           this.loadAvailableInventory();
-          this.calculateABV();
+          this.calculateVolumes();
           wx.showToast({
             title: '已删除',
             icon: 'success'
@@ -230,7 +248,7 @@ Page({
     });
 
     this.loadAvailableInventory();
-    this.calculateABV();
+    this.calculateVolumes();
 
     wx.showToast({
       title: '材料已添加',
@@ -333,7 +351,8 @@ Page({
       price: cocktail.price,
       materials: cocktail.materials,
       sales: cocktail.sales,
-      tags: cocktail.tags || []
+      tags: cocktail.tags || [],
+      serveSize: cocktail.serveSize || 200
     };
     wx.setStorageSync('recipeData', recipeData);
     this.setData({ cocktail });
