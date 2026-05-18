@@ -3,56 +3,25 @@ Page({
     inventory: [],
     filteredInventory: [],
     currentTab: 'all',
-    materialsList: [
-      { id: 'gin', name: '金酒' },
-      { id: 'vodka', name: '伏特加' },
-      { id: 'rum', name: '朗姆酒' },
-      { id: 'whiskey', name: '威士忌' },
-      { id: 'tequila', name: '龙舌兰' },
-      { id: 'brandy', name: '白兰地' },
-      { id: 'tonic', name: '汤力水' },
-      { id: 'soda', name: '苏打水' },
-      { id: 'lime', name: '青柠汁' },
-      { id: 'lemon', name: '柠檬汁' },
-      { id: 'grapefruit', name: '西柚汁' },
-      { id: 'pineapple', name: '菠萝汁' },
-      { id: 'orange', name: '橙汁' },
-      { id: 'vermouth', name: '苦艾酒' },
-      { id: 'campari', name: '金巴利' }
-    ]
+    showModal: false,
+    modalType: 'add',
+    editingId: '',
+    formData: {
+      brand: '',
+      name: '',
+      abv: '',
+      unitType: 'ml',
+      quantity: '',
+      unitPrice: ''
+    }
   },
 
   onLoad() {
-    this.initInventory();
     this.loadInventory();
   },
 
   onShow() {
     this.loadInventory();
-  },
-
-  initInventory() {
-    const inventory = wx.getStorageSync('inventory');
-    if (!inventory) {
-      const defaultInventory = [
-        { id: 'gin', name: '金酒', currentStock: 1000, initialStock: 1000 },
-        { id: 'vodka', name: '伏特加', currentStock: 1000, initialStock: 1000 },
-        { id: 'rum', name: '朗姆酒', currentStock: 1000, initialStock: 1000 },
-        { id: 'whiskey', name: '威士忌', currentStock: 1000, initialStock: 1000 },
-        { id: 'tequila', name: '龙舌兰', currentStock: 800, initialStock: 800 },
-        { id: 'brandy', name: '白兰地', currentStock: 600, initialStock: 600 },
-        { id: 'tonic', name: '汤力水', currentStock: 2000, initialStock: 2000 },
-        { id: 'soda', name: '苏打水', currentStock: 2000, initialStock: 2000 },
-        { id: 'lime', name: '青柠汁', currentStock: 500, initialStock: 500 },
-        { id: 'lemon', name: '柠檬汁', currentStock: 500, initialStock: 500 },
-        { id: 'grapefruit', name: '西柚汁', currentStock: 400, initialStock: 400 },
-        { id: 'pineapple', name: '菠萝汁', currentStock: 400, initialStock: 400 },
-        { id: 'orange', name: '橙汁', currentStock: 400, initialStock: 400 },
-        { id: 'vermouth', name: '苦艾酒', currentStock: 300, initialStock: 300 },
-        { id: 'campari', name: '金巴利', currentStock: 300, initialStock: 300 }
-      ];
-      wx.setStorageSync('inventory', defaultInventory);
-    }
   },
 
   loadInventory() {
@@ -111,18 +80,149 @@ Page({
     return '正常';
   },
 
+  showAddMaterial() {
+    this.setData({
+      showModal: true,
+      modalType: 'add',
+      editingId: '',
+      formData: {
+        brand: '',
+        name: '',
+        abv: '',
+        unitType: 'ml',
+        quantity: '',
+        unitPrice: ''
+      }
+    });
+  },
+
+  hideModal() {
+    this.setData({ showModal: false });
+  },
+
+  onInput(e) {
+    const field = e.currentTarget.dataset.field;
+    this.setData({
+      [`formData.${field}`]: e.detail.value
+    });
+  },
+
+  selectUnitType(e) {
+    const type = e.currentTarget.dataset.type;
+    this.setData({
+      'formData.unitType': type
+    });
+  },
+
+  editMaterial(e) {
+    const id = e.currentTarget.dataset.id;
+    const item = this.data.inventory.find(i => i.id === id);
+    
+    if (item) {
+      this.setData({
+        showModal: true,
+        modalType: 'edit',
+        editingId: id,
+        formData: {
+          brand: item.brand || '',
+          name: item.name,
+          abv: item.abv || '',
+          unitType: item.unitType || 'ml',
+          quantity: item.currentStock,
+          unitPrice: item.unitPrice || ''
+        }
+      });
+    }
+  },
+
+  confirmAddMaterial() {
+    const { formData, modalType, editingId } = this.data;
+    
+    if (!formData.name.trim()) {
+      wx.showToast({
+        title: '请输入材料名称',
+        icon: 'none'
+      });
+      return;
+    }
+
+    const quantity = parseFloat(formData.quantity);
+    const unitPrice = parseFloat(formData.unitPrice);
+    const abv = parseFloat(formData.abv) || 0;
+
+    if (isNaN(quantity) || quantity < 0) {
+      wx.showToast({
+        title: '请输入有效的数量',
+        icon: 'none'
+      });
+      return;
+    }
+
+    if (isNaN(unitPrice) || unitPrice < 0) {
+      wx.showToast({
+        title: '请输入有效的单价',
+        icon: 'none'
+      });
+      return;
+    }
+
+    const id = modalType === 'edit' ? editingId : this.generateId(formData.name);
+    const inventory = [...this.data.inventory];
+
+    if (modalType === 'edit') {
+      const index = inventory.findIndex(i => i.id === editingId);
+      if (index !== -1) {
+        inventory[index] = {
+          ...inventory[index],
+          brand: formData.brand.trim(),
+          name: formData.name.trim(),
+          abv: abv,
+          unitType: formData.unitType,
+          currentStock: quantity,
+          initialStock: Math.max(inventory[index].initialStock, quantity),
+          unitPrice: unitPrice
+        };
+      }
+    } else {
+      const newMaterial = {
+        id: id,
+        brand: formData.brand.trim(),
+        name: formData.name.trim(),
+        abv: abv,
+        unitType: formData.unitType,
+        currentStock: quantity,
+        initialStock: quantity,
+        unitPrice: unitPrice
+      };
+      inventory.push(newMaterial);
+    }
+
+    wx.setStorageSync('inventory', inventory);
+    this.setData({ showModal: false });
+    this.loadInventory();
+
+    wx.showToast({
+      title: modalType === 'edit' ? '编辑成功' : '添加成功',
+      icon: 'success'
+    });
+  },
+
+  generateId(name) {
+    return name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
+  },
+
   addStock(e) {
     const id = e.currentTarget.dataset.id;
     const item = this.data.inventory.find(i => i.id === id);
     
     wx.showModal({
-      title: `入库 - ${item.name}`,
+      title: '入库 - ' + item.name,
       editable: true,
-      placeholderText: '请输入入库数量(ml)',
+      placeholderText: '输入入库数量',
       content: '',
       success: (res) => {
         if (res.confirm && res.content) {
-          const amount = parseInt(res.content);
+          const amount = parseFloat(res.content);
           if (!isNaN(amount) && amount > 0) {
             const inventory = this.data.inventory.map(i => {
               if (i.id === id) {
@@ -140,93 +240,32 @@ Page({
               title: '入库成功',
               icon: 'success'
             });
-          }
-        }
-      }
-    });
-  },
-
-  editStock(e) {
-    const id = e.currentTarget.dataset.id;
-    const item = this.data.inventory.find(i => i.id === id);
-    
-    wx.showModal({
-      title: `调整库存 - ${item.name}`,
-      editable: true,
-      placeholderText: '请输入新的库存量(ml)',
-      content: String(item.currentStock),
-      success: (res) => {
-        if (res.confirm && res.content) {
-          const newStock = parseInt(res.content);
-          if (!isNaN(newStock) && newStock >= 0) {
-            const inventory = this.data.inventory.map(i => {
-              if (i.id === id) {
-                return {
-                  ...i,
-                  currentStock: newStock
-                };
-              }
-              return i;
-            });
-            wx.setStorageSync('inventory', inventory);
-            this.loadInventory();
-            wx.showToast({
-              title: '调整成功',
-              icon: 'success'
-            });
-          }
-        }
-      }
-    });
-  },
-
-  addMaterial() {
-    const { materialsList } = this.data;
-    const inventory = wx.getStorageSync('inventory') || [];
-    const existingIds = inventory.map(i => i.id);
-    const availableMaterials = materialsList.filter(m => !existingIds.includes(m.id));
-
-    if (availableMaterials.length === 0) {
-      wx.showToast({
-        title: '所有材料已添加',
-        icon: 'none'
-      });
-      return;
-    }
-
-    const materialNames = availableMaterials.map(m => m.name).join('\n');
-    
-    wx.showModal({
-      title: '选择新增材料',
-      content: `可添加的材料：\n${materialNames}\n\n请在下方输入材料ID（如：gin）`,
-      editable: true,
-      placeholderText: '输入材料ID',
-      success: (res) => {
-        if (res.confirm && res.content) {
-          const materialId = res.content.trim();
-          const material = availableMaterials.find(m => m.id === materialId);
-          
-          if (material) {
-            const newMaterial = {
-              id: material.id,
-              name: material.name,
-              currentStock: 1000,
-              initialStock: 1000
-            };
-            
-            inventory.push(newMaterial);
-            wx.setStorageSync('inventory', inventory);
-            this.loadInventory();
-            wx.showToast({
-              title: '添加成功',
-              icon: 'success'
-            });
           } else {
             wx.showToast({
-              title: '材料不存在',
+              title: '请输入有效数量',
               icon: 'none'
             });
           }
+        }
+      }
+    });
+  },
+
+  deleteMaterial(e) {
+    const id = e.currentTarget.dataset.id;
+    
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这个材料吗？',
+      success: (res) => {
+        if (res.confirm) {
+          const inventory = this.data.inventory.filter(i => i.id !== id);
+          wx.setStorageSync('inventory', inventory);
+          this.loadInventory();
+          wx.showToast({
+            title: '已删除',
+            icon: 'success'
+          });
         }
       }
     });

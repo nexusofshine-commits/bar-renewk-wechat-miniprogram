@@ -68,6 +68,11 @@
   font-weight: bold;
 }
 
+.info-value.abv {
+  color: #ff9800;
+  font-weight: bold;
+}
+
 .materials-list {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(212, 175, 55, 0.2);
@@ -92,6 +97,12 @@
   flex: 1;
   font-size: 28rpx;
   color: #ffffff;
+}
+
+.material-abv {
+  font-size: 22rpx;
+  color: #808080;
+  margin-left: 10rpx;
 }
 
 .material-amount {
@@ -177,6 +188,12 @@
   color: #ffffff;
 }
 
+.material-picker-abv {
+  font-size: 24rpx;
+  color: #808080;
+  margin-left: 10rpx;
+}
+
 .check-mark {
   font-size: 28rpx;
   color: #d4af37;
@@ -221,6 +238,71 @@
 }
 
 .confirm-add-btn::after {
+  border: none;
+}
+
+.tags-section {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 20rpx;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #d4af37;
+}
+
+.tag-delete {
+  margin-left: 10rpx;
+  color: #ff9800;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.tag-delete:active {
+  color: #f44336;
+}
+
+.add-tag-section {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.tag-input {
+  flex: 1;
+  padding: 16rpx 20rpx;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 10rpx;
+  font-size: 26rpx;
+  color: #ffffff;
+}
+
+.tag-add-btn {
+  padding: 16rpx 30rpx;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid #d4af37;
+  border-radius: 10rpx;
+  font-size: 26rpx;
+  color: #d4af37;
+}
+
+.tag-add-btn::after {
   border: none;
 }
 

@@ -15,20 +15,34 @@
           wx:for="{{filteredInventory}}" 
           wx:key="id">
       <view class="inventory-header">
-        <view class="inventory-name">{{item.name}}</view>
+        <view class="inventory-title">
+          <view class="inventory-name">{{item.name}}</view>
+          <view class="inventory-brand" wx:if="{{item.brand}}">{{item.brand}}</view>
+        </view>
         <view class="inventory-badge {{item.warningLevel}}">
           {{getWarningText(item)}}
+        </view>
+      </view>
+
+      <view class="inventory-info">
+        <view class="info-row">
+          <text class="info-label">酒精度</text>
+          <text class="info-value">{{item.abv || 0}}%</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">进货单价</text>
+          <text class="info-value">¥{{item.unitPrice || 0}}/{{item.unitType === 'piece' ? '件' : 'ml'}}</text>
         </view>
       </view>
 
       <view class="inventory-stats">
         <view class="stock-info">
           <view class="stock-label">当前库存</view>
-          <view class="stock-value">{{item.currentStock}} ml</view>
+          <view class="stock-value">{{item.currentStock}} {{item.unitType === 'piece' ? '件' : 'ml'}}</view>
         </view>
         <view class="stock-info">
           <view class="stock-label">初始库存</view>
-          <view class="stock-value">{{item.initialStock}} ml</view>
+          <view class="stock-value">{{item.initialStock}} {{item.unitType === 'piece' ? '件' : 'ml'}}</view>
         </view>
         <view class="stock-info">
           <view class="stock-label">使用占比</view>
@@ -45,13 +59,64 @@
         <button class="action-btn add" catchtap="addStock" data-id="{{item.id}}">
           入库
         </button>
-        <button class="action-btn edit" catchtap="editStock" data-id="{{item.id}}">
-          调整
+        <button class="action-btn edit" catchtap="editMaterial" data-id="{{item.id}}">
+          编辑
+        </button>
+        <button class="action-btn delete" catchtap="deleteMaterial" data-id="{{item.id}}">
+          删除
         </button>
       </view>
     </view>
   </scroll-view>
 
-  <button class="btn-add-material" bindtap="addMaterial">新增材料</button>
+  <button class="btn-add-material" bindtap="showAddMaterial">新增材料</button>
   <button class="btn-back" bindtap="goBack">返回</button>
+</view>
+
+<view class="modal" wx:if="{{showModal}}">
+  <view class="modal-mask" bindtap="hideModal"></view>
+  <view class="modal-content">
+    <view class="modal-title">{{modalType === 'add' ? '新增材料' : '编辑材料'}}</view>
+    
+    <view class="form-item">
+      <text class="form-label">品牌（选填）</text>
+      <input class="form-input" value="{{formData.brand}}" placeholder="如：绝对伏特加" bindinput="onInput" data-field="brand"/>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">材料名称 *</text>
+      <input class="form-input" value="{{formData.name}}" placeholder="如：伏特加" bindinput="onInput" data-field="name"/>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">酒精度（选填）</text>
+      <input class="form-input" type="digit" value="{{formData.abv}}" placeholder="如：40" bindinput="onInput" data-field="abv"/>
+      <text class="form-unit">%</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">单位 *</text>
+      <view class="unit-selector">
+        <view class="unit-option {{formData.unitType === 'ml' ? 'active' : ''}}" bindtap="selectUnitType" data-type="ml">毫升(ml)</view>
+        <view class="unit-option {{formData.unitType === 'piece' ? 'active' : ''}}" bindtap="selectUnitType" data-type="piece">件</view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">本次进货数量 *</text>
+      <input class="form-input" type="digit" value="{{formData.quantity}}" placeholder="请输入数量" bindinput="onInput" data-field="quantity"/>
+      <text class="form-unit">{{formData.unitType === 'piece' ? '件' : 'ml'}}</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">本次进货单价 *</text>
+      <input class="form-input" type="digit" value="{{formData.unitPrice}}" placeholder="请输入单价" bindinput="onInput" data-field="unitPrice"/>
+      <text class="form-unit">元</text>
+    </view>
+
+    <view class="modal-actions">
+      <button class="modal-btn cancel" bindtap="hideModal">取消</button>
+      <button class="modal-btn confirm" bindtap="confirmAddMaterial">确认</button>
+    </view>
+  </view>
 </view>

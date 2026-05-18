@@ -29,7 +29,9 @@ Page({
     showMaterialPicker: false,
     availableInventory: [],
     selectedMaterialIndex: -1,
-    newMaterialAmount: ''
+    newMaterialAmount: '',
+    newTag: '',
+    calculatedABV: 0
   },
 
   onLoad(options) {
@@ -50,11 +52,13 @@ Page({
           isActive: savedData.isActive !== undefined ? savedData.isActive : true,
           price: savedData.price || cocktail.price,
           materials: savedData.materials || this.getDefaultMaterials(cocktail),
-          sales: savedData.sales || 0
+          sales: savedData.sales || 0,
+          tags: savedData.tags || []
         }
       });
       
       this.loadAvailableInventory();
+      this.calculateABV();
     }
   },
 
@@ -83,8 +87,47 @@ Page({
     this.setData({ availableInventory });
   },
 
+  calculateABV() {
+    const { cocktail } = this.data;
+    const inventory = wx.getStorageSync('inventory') || [];
+    
+    let totalAlcohol = 0;
+    let totalVolume = 0;
+
+    cocktail.materials.forEach(material => {
+      const inventoryItem = inventory.find(i => i.id === material.name);
+      const abv = inventoryItem && inventoryItem.abv ? inventoryItem.abv : 0;
+      const amount = material.amount || 0;
+      
+      totalAlcohol += (abv / 100) * amount;
+      totalVolume += amount;
+    });
+
+    const calculatedABV = totalVolume > 0 ? Math.round((totalAlcohol / totalVolume) * 100 * 10) / 10 : 0;
+    this.setData({ calculatedABV });
+  },
+
   getMaterialName(id) {
     return this.data.materialNames[id] || id;
+  },
+
+  getMaterialABV(id) {
+    const inventory = wx.getStorageSync('inventory') || [];
+    const item = inventory.find(i => i.id === id);
+    return item && item.abv ? item.abv : 0;
+  },
+
+  getMaterialUnit(id) {
+    const inventory = wx.getStorageSync('inventory') || [];
+    const item = inventory.find(i => i.id === id);
+    return item && item.unitType === 'piece' ? '件' : 'ml';
+  },
+
+  getSelectedMaterialUnit() {
+    const { selectedMaterialIndex, availableInventory } = this.data;
+    if (selectedMaterialIndex === -1) return 'ml';
+    const item = availableInventory[selectedMaterialIndex];
+    return item && item.unitType === 'piece' ? '件' : 'ml';
   },
 
   toggleStatus(e) {
@@ -99,13 +142,14 @@ Page({
 
   updateMaterialAmount(e) {
     const index = e.currentTarget.dataset.index;
-    const amount = parseInt(e.detail.value) || 0;
+    const amount = parseFloat(e.detail.value) || 0;
     
     const materials = [...this.data.cocktail.materials];
     materials[index].amount = amount;
     
     const cocktail = {...this.data.cocktail, materials};
     this.saveCocktail(cocktail);
+    this.calculateABV();
   },
 
   deleteMaterial(e) {
@@ -122,6 +166,7 @@ Page({
           const cocktail = {...this.data.cocktail, materials};
           this.saveCocktail(cocktail);
           this.loadAvailableInventory();
+          this.calculateABV();
           wx.showToast({
             title: '已删除',
             icon: 'success'
@@ -162,7 +207,7 @@ Page({
       return;
     }
 
-    const amount = parseInt(newMaterialAmount);
+    const amount = parseFloat(newMaterialAmount);
     if (isNaN(amount) || amount <= 0) {
       wx.showToast({
         title: '请输入有效用量',
@@ -184,8 +229,58 @@ Page({
       newMaterialAmount: ''
     });
 
+    this.loadAvailableInventory();
+    this.calculateABV();
+
     wx.showToast({
       title: '材料已添加',
+      icon: 'success'
+    });
+  },
+
+  onTagInput(e) {
+    this.setData({ newTag: e.detail.value });
+  },
+
+  addTag() {
+    const { newTag, cocktail } = this.data;
+    
+    if (!newTag.trim()) {
+      wx.showToast({
+        title: '请输入标签',
+        icon: 'none'
+      });
+      return;
+    }
+
+    const tags = [...(cocktail.tags || [])];
+    if (tags.includes(newTag.trim())) {
+      wx.showToast({
+        title: '标签已存在',
+        icon: 'none'
+      });
+      return;
+    }
+
+    tags.push(newTag.trim());
+    const updatedCocktail = { ...cocktail, tags };
+    this.saveCocktail(updatedCocktail);
+    this.setData({ newTag: '' });
+
+    wx.showToast({
+      title: '标签已添加',
+      icon: 'success'
+    });
+  },
+
+  deleteTag(e) {
+    const index = e.currentTarget.dataset.index;
+    const tags = [...this.data.cocktail.tags];
+    tags.splice(index, 1);
+    const cocktail = { ...this.data.cocktail, tags };
+    this.saveCocktail(cocktail);
+    wx.showToast({
+      title: '标签已删除',
       icon: 'success'
     });
   },
@@ -237,11 +332,11 @@ Page({
       isActive: cocktail.isActive,
       price: cocktail.price,
       materials: cocktail.materials,
-      sales: cocktail.sales
+      sales: cocktail.sales,
+      tags: cocktail.tags || []
     };
     wx.setStorageSync('recipeData', recipeData);
     this.setData({ cocktail });
-    this.loadAvailableInventory();
   },
 
   goBack() {

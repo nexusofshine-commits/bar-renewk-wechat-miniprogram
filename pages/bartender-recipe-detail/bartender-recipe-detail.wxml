@@ -21,6 +21,29 @@
         <view class="info-label">销量</view>
         <view class="info-value">{{cocktail.sales || 0}} 杯</view>
       </view>
+      <view class="info-row">
+        <view class="info-label">酒精度</view>
+        <view class="info-value abv">{{calculatedABV}}%</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">自定义标签</view>
+    <view class="tags-section">
+      <view class="tags-list">
+        <view class="tag-item" wx:for="{{cocktail.tags}}" wx:key="*this">
+          <text>{{item}}</text>
+          <text class="tag-delete" catchtap="deleteTag" data-index="{{index}}">×</text>
+        </view>
+      </view>
+      <view class="add-tag-section">
+        <input class="tag-input" 
+               value="{{newTag}}" 
+               placeholder="输入标签名称" 
+               bindinput="onTagInput"/>
+        <button class="tag-add-btn" catchtap="addTag">添加</button>
+      </view>
     </view>
   </view>
 
@@ -29,13 +52,16 @@
     <view class="materials-list">
       <view class="material-item" wx:for="{{cocktail.materials}}" wx:key="index">
         <view class="material-name">{{getMaterialName(item.name)}}</view>
+        <view class="material-abv" wx:if="{{getMaterialABV(item.name)}}">
+          ({{getMaterialABV(item.name)}}%)
+        </view>
         <view class="material-amount">
-          <input type="number" 
+          <input type="digit" 
                  value="{{item.amount}}" 
                  data-index="{{index}}"
                  bindchange="updateMaterialAmount"
                  class="amount-input"/>
-          <text class="unit">ml</text>
+          <text class="unit">{{getMaterialUnit(item.name)}}</text>
         </view>
         <button class="delete-btn" catchtap="deleteMaterial" data-index="{{index}}">删除</button>
       </view>
@@ -54,20 +80,21 @@
               catchtap="selectMaterial" 
               data-index="{{index}}">
           <text class="material-picker-text">{{item.name}}</text>
+          <text class="material-picker-abv" wx:if="{{item.abv}}">{{item.abv}}%</text>
           <text wx:if="{{selectedMaterialIndex === index}}" class="check-mark">✓</text>
         </view>
         
         <view wx:if="{{selectedMaterialIndex !== -1}}">
           <view class="amount-input-section">
             <text class="label">用量：</text>
-            <input type="number" 
+            <input type="digit" 
                    class="amount-input-small" 
                    value="{{newMaterialAmount}}"
-                   placeholder="输入用量(ml)"
+                   placeholder="输入用量"
                    bindinput="onAmountInput" />
-            <text class="unit">ml</text>
+            <text class="unit">{{getSelectedMaterialUnit()}}</text>
           </view>
-          <button class="confirm-add-btn" bindtap="confirmAddMaterial">确认添加</button>
+          <button class="confirm-add-btn" catchtap="confirmAddMaterial">确认添加</button>
         </view>
       </view>
     </view>
@@ -76,10 +103,10 @@
   <view class="section">
     <view class="section-title">操作</view>
     <view class="action-buttons">
-      <button class="action-btn" bindtap="editPrice">修改价格</button>
-      <button class="action-btn" bindtap="resetSales">重置销量</button>
+      <button class="action-btn" catchtap="editPrice">修改价格</button>
+      <button class="action-btn" catchtap="resetSales">重置销量</button>
     </view>
   </view>
 
-  <button class="btn-back" bindtap="goBack">返回</button>
+  <button class="btn-back" catchtap="goBack">返回</button>
 </view>
