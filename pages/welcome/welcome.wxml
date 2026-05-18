@@ -1,10 +1,10 @@
 <view class="container">
   <view class="welcome-content">
     <view class="welcome-icon">🍸</view>
-    <view class="welcome-title">{{venueName}}</view>
+    <view class="welcome-title" bindtap="onTitleTap">{{venueName}}</view>
     <view class="welcome-description">选择一款酒，享受一个美好的夜晚</view>
     
-    <button class="btn btn-primary" bindtap="handleStart">开始选择</button>
+    <button class="btn btn-primary" data-text="{{venueName}}" bindtap="handleStart">开始选择</button>
     
     <view class="new-customer-offer" wx:if="{{showNewCustomerOffer}}">
       <view class="offer-title">新客专享</view>
